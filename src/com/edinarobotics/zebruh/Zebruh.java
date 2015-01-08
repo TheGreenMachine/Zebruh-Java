@@ -1,41 +1,41 @@
-
 package com.edinarobotics.zebruh;
 
+import com.edinarobotics.utils.gamepad.Gamepad;
+import com.edinarobotics.zebruh.commands.GamepadHorizontalStrafeCommand;
+import com.edinarobotics.zebruh.commands.GamepadRotationCommand;
+import com.edinarobotics.zebruh.commands.GamepadVerticalStrafeCommand;
+import com.edinarobotics.zebruh.subsystems.Drivetrain;
+
 import edu.wpi.first.wpilibj.IterativeRobot;
+import edu.wpi.first.wpilibj.command.Scheduler;
 
-/**
- * The VM is configured to automatically run this class, and to call the
- * functions corresponding to each mode, as described in the IterativeRobot
- * documentation. If you change the name of this class or the package after
- * creating this project, you must also update the manifest file in the resource
- * directory.
- */
 public class Zebruh extends IterativeRobot {
-    /**
-     * This function is run when the robot is first started up and should be
-     * used for any initialization code.
-     */
+	
+	private Drivetrain drivetrain;
+	
     public void robotInit() {
-
+    	Controls.getInstance();
+    	Components.getInstance();
+    	drivetrain = Components.getInstance().drivetrain;
     }
 
-    /**
-     * This function is called periodically during autonomous
-     */
     public void autonomousPeriodic() {
 
     }
+    
+    @Override
+    public void teleopInit() {
+    	Gamepad gamepad1 = Controls.getInstance().gamepad;
+    	Components.getInstance().rotationDrive.setDefaultCommand(new GamepadRotationCommand(gamepad1));
+    	Components.getInstance().verticalStrafe.setDefaultCommand(new GamepadVerticalStrafeCommand(gamepad1));
+    	Components.getInstance().horizontalStrafe.setDefaultCommand(new GamepadHorizontalStrafeCommand(gamepad1));    	
+    }
 
-    /**
-     * This function is called periodically during operator control
-     */
     public void teleopPeriodic() {
+    	Scheduler.getInstance().run();
         
     }
     
-    /**
-     * This function is called periodically during test mode
-     */
     public void testPeriodic() {
     
     }
