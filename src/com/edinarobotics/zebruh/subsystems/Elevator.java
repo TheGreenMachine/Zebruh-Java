@@ -28,25 +28,34 @@ public class Elevator extends Subsystem1816 {
 		if (lastLevel > level) {
 			isDown = true;
 			targetLevel = lastLevel - level;
+			if(getEncoderCount() > targetEncoderCount)
+				elevatorAutoSpeed *= -1;
 		} else {
 			isDown = false;
 			targetLevel = level - lastLevel;
+			if(getEncoderCount() < targetEncoderCount)
+			elevatorAutoSpeed *= -1;
 		}
 		lastLevel = level;
 		switch (targetLevel) {
 		//TODO: set target encoder ticks
 		case 0:
 			update();
+			break;
 		case 1:
 			update();
+			break;
 		case 2:
 			update();
+			break;
 		case 3:
 			update();
+			break;
 		case 4:
 			update();
 		case 5:
 			update();
+			break;
 		}
 	}
 
@@ -70,28 +79,18 @@ public class Elevator extends Subsystem1816 {
 		return currentEncoderCount;
 	}
 
-	public void resetEncoder() {
-		elevatorEncoder.reset();
-	}
-
 	@Override
 	public void update() {
-		if (isOverride && !isDone) {
+		if (isOverride) {
 			elevatorTalon.set(elevatorManualSpeed);
-		} else if (!isDone) {
-			if (isDown) {
-				while (getEncoderCount() > targetEncoderCount && !isDone) {
-					elevatorTalon.set(-elevatorAutoSpeed);
-				}
-				isDone = true;
-			} else {
-				while (getEncoderCount() < targetEncoderCount && !isDone) {
-					elevatorTalon.set(elevatorAutoSpeed);
-				}
-				isDone = true;
-			}
+		} else {
+			if(getEncoderCount() > targetEncoderCount)
+				elevatorTalon.set(elevatorAutoSpeed);
+			else if(getEncoderCount() < targetEncoderCount)
+				elevatorTalon.set(elevatorAutoSpeed);
+			else
+				elevatorTalon.set(0.0);
 		}
-		isDone = true;
 	}
 
 }
