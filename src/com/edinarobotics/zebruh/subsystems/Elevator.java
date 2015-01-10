@@ -9,8 +9,8 @@ public class Elevator extends Subsystem1816 {
 
 	private Talon elevatorTalon;
 	private Encoder elevatorEncoder;
-	private double elevatorManualSpeed;
-	private double elevatorAutoSpeed = 1;
+	private double elevatorManualSpeed = 1.0;
+	private double elevatorAutoSpeed = 1.0;
 	private int targetLevel, currentEncoderCount,
 			targetEncoderCount;
 	private int lastLevel = 0;
@@ -21,6 +21,7 @@ public class Elevator extends Subsystem1816 {
 		this.elevatorTalon = new Talon(elevatorTalon);
 		this.elevatorEncoder = new Encoder(elevatorEncoderChannelA,
 				elevatorEncoderChannelB);
+		isOverride = false;
 	}
 
 	public void setElevatorLevel(int targetLevel) {
@@ -57,8 +58,7 @@ public class Elevator extends Subsystem1816 {
 		}
 	}
 
-	public void setElevatorSpeed(double elevatorSpeed, boolean isOverride) {
-		this.elevatorManualSpeed = elevatorSpeed;
+	public void setElevatorSpeed(boolean isOverride) {
 		this.isOverride = isOverride;
 		elevatorTalon.set(elevatorManualSpeed);
 	}

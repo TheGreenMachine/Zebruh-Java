@@ -10,8 +10,6 @@ public class RunElevatorManualCommand extends Command{
 	private Elevator elevator;
 	private boolean isOverride;
 	
-	private double elevatorSpeed;
-	
 	public RunElevatorManualCommand(Elevator elevator, boolean isOverride) {
 		super("RunElevatorManual");
 		this.elevator = Components.getInstance().elevator;
@@ -27,7 +25,7 @@ public class RunElevatorManualCommand extends Command{
 
 	@Override
 	protected void execute() {
-		elevator.setElevatorSpeed(elevatorSpeed, isOverride);
+		elevator.setElevatorSpeed(isOverride);
 	}
 
 	@Override
