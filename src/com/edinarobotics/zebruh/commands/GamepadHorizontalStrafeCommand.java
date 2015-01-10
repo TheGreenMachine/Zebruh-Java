@@ -14,6 +14,7 @@ public class GamepadHorizontalStrafeCommand extends Command {
 		super("GamepadHorizontalStrafe");
 		horizontalStrafe = Components.getInstance().horizontalStrafe;
 		this.gamepad = gamepad;
+		requires(horizontalStrafe);
 	}
 	
 	@Override

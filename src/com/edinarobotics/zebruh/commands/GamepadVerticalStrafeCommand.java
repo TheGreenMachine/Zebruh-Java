@@ -14,6 +14,7 @@ public class GamepadVerticalStrafeCommand extends Command {
 		super("GamepadVerticalStrafe");
 		this.gamepad = gamepad;
 		verticalStrafe = Components.getInstance().verticalStrafe;
+		requires(verticalStrafe);
 	}
 
 	@Override

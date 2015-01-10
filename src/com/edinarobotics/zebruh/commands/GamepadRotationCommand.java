@@ -15,6 +15,7 @@ public class GamepadRotationCommand extends Command {
 		super("GamepadRotationCommand");
 		this.gamepad = gamepad;
 		this.rotationDrive = Components.getInstance().rotationDrive;
+		requires(rotationDrive);
 	}
 	
 	@Override
