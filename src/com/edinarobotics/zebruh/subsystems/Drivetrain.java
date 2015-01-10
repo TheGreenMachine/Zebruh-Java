@@ -3,13 +3,11 @@ package com.edinarobotics.zebruh.subsystems;
 import com.edinarobotics.utils.common.Updatable;
 
 import edu.wpi.first.wpilibj.CANTalon;
-import edu.wpi.first.wpilibj.command.Command;
+import edu.wpi.first.wpilibj.CANTalon.ControlMode;
 
 public class Drivetrain implements Updatable {
 
-	private CANTalon topLeft, topRight, bottomLeft, bottomRight, middleTop,
-			middleBottom;
-
+	private CANTalon topLeft, topRight, bottomLeft, bottomRight;
 	private double verticalStrafe, horizontalStrafe, rotation;
 
 	private HRobotDrive hRobotDrive;
@@ -20,10 +18,16 @@ public class Drivetrain implements Updatable {
 		this.topRight = new CANTalon(topRight);
 		this.bottomLeft = new CANTalon(bottomLeft);
 		this.bottomRight = new CANTalon(bottomRight);
-		this.middleTop = new CANTalon(middleTop);
-		this.middleBottom = new CANTalon(middleBottom);
-		hRobotDrive = new HRobotDrive(topLeft, bottomLeft, topRight,
-				bottomRight, middleBottom, middleTop);
+		this.topLeft.changeControlMode(ControlMode.PercentVbus);
+		this.topRight.changeControlMode(ControlMode.PercentVbus);
+		this.bottomLeft.changeControlMode(ControlMode.PercentVbus);
+		this.bottomRight.changeControlMode(ControlMode.PercentVbus);
+		this.topLeft.enableControl();
+		this.topRight.enableControl();
+		this.bottomLeft.enableControl();
+		this.bottomRight.enableControl();
+		hRobotDrive = new HRobotDrive(this.topLeft, this.bottomLeft, this.topRight,
+				this.bottomRight, middleBottom, middleTop);
 	}
 
 	public void setVerticalStrafe(double verticalStrafe) {
