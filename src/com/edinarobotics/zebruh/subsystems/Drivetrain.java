@@ -1,11 +1,11 @@
 package com.edinarobotics.zebruh.subsystems;
 
-import com.edinarobotics.utils.common.Updatable;
+import com.edinarobotics.utils.subsystems.Subsystem1816;
 
 import edu.wpi.first.wpilibj.CANTalon;
 import edu.wpi.first.wpilibj.CANTalon.ControlMode;
 
-public class Drivetrain implements Updatable {
+public class Drivetrain extends Subsystem1816 {
 
 	private CANTalon topLeft, topRight, bottomLeft, bottomRight;
 	private double verticalStrafe, horizontalStrafe, rotation;
@@ -22,10 +22,6 @@ public class Drivetrain implements Updatable {
 		this.topRight.changeControlMode(ControlMode.PercentVbus);
 		this.bottomLeft.changeControlMode(ControlMode.PercentVbus);
 		this.bottomRight.changeControlMode(ControlMode.PercentVbus);
-		this.topLeft.enableControl();
-		this.topRight.enableControl();
-		this.bottomLeft.enableControl();
-		this.bottomRight.enableControl();
 		hRobotDrive = new HRobotDrive(this.topLeft, this.bottomLeft, this.topRight,
 				this.bottomRight, middleBottom, middleTop);
 	}

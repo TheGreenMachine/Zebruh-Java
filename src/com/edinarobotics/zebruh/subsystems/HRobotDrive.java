@@ -18,8 +18,6 @@ public class HRobotDrive extends RobotDrive {
 		middleTop = new CANTalon(middleTopMotor);
 		middleBottom.changeControlMode(ControlMode.PercentVbus);
 		middleBottom.changeControlMode(ControlMode.PercentVbus);
-		middleBottom.enableControl();
-		middleTop.enableControl();
 	}
 	
 	public void hDrive(double verticalStrafe, double horizontalStrafe, double rotation) {
