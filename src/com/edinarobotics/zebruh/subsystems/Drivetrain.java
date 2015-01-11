@@ -6,7 +6,6 @@ import edu.wpi.first.wpilibj.CANTalon;
 import edu.wpi.first.wpilibj.CANTalon.ControlMode;
 
 public class Drivetrain extends Subsystem1816 {
-
 	private CANTalon topLeft, topRight, bottomLeft, bottomRight;
 	private double verticalStrafe, horizontalStrafe, rotation;
 
@@ -22,8 +21,8 @@ public class Drivetrain extends Subsystem1816 {
 		this.topRight.changeControlMode(ControlMode.PercentVbus);
 		this.bottomLeft.changeControlMode(ControlMode.PercentVbus);
 		this.bottomRight.changeControlMode(ControlMode.PercentVbus);
-		hRobotDrive = new HRobotDrive(this.topLeft, this.bottomLeft, this.topRight,
-				this.bottomRight, middleBottom, middleTop);
+		hRobotDrive = new HRobotDrive(this.topLeft, this.bottomLeft,
+				this.topRight, this.bottomRight, middleBottom, middleTop);
 	}
 
 	public void setVerticalStrafe(double verticalStrafe) {
@@ -35,8 +34,8 @@ public class Drivetrain extends Subsystem1816 {
 		this.horizontalStrafe = horizontalStrafe;
 		update();
 	}
-	
-	public void setRotation (double setRotation) {
+
+	public void setRotation(double setRotation) {
 		this.rotation = setRotation;
 		update();
 	}
@@ -45,5 +44,4 @@ public class Drivetrain extends Subsystem1816 {
 	public void update() {
 		hRobotDrive.hDrive(verticalStrafe, horizontalStrafe, rotation);
 	}
-
 }

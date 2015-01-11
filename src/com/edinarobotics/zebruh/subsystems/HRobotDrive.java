@@ -6,7 +6,6 @@ import edu.wpi.first.wpilibj.RobotDrive;
 import edu.wpi.first.wpilibj.SpeedController;
 
 public class HRobotDrive extends RobotDrive {
-
 	private CANTalon middleBottom, middleTop;
 	
 	public HRobotDrive(SpeedController frontLeftMotor,
@@ -25,5 +24,4 @@ public class HRobotDrive extends RobotDrive {
 		middleBottom.set(horizontalStrafe);
 		middleTop.set(horizontalStrafe);
 	}
-
 }

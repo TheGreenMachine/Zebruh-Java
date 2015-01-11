@@ -6,7 +6,6 @@ import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.Talon;
 
 public class Elevator extends Subsystem1816 {
-
 	private Talon elevatorTalon;
 	private Encoder elevatorEncoder;
 	private double elevatorManualSpeed = 1.0;
@@ -89,5 +88,4 @@ public class Elevator extends Subsystem1816 {
 				elevatorTalon.set(0.0);
 		}
 	}
-
 }

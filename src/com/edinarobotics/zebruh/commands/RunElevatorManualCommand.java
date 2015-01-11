@@ -6,7 +6,6 @@ import com.edinarobotics.zebruh.subsystems.Elevator;
 import edu.wpi.first.wpilibj.command.Command;
 
 public class RunElevatorManualCommand extends Command{
-	
 	private Elevator elevator;
 	private boolean isOverride;
 	
@@ -40,7 +39,6 @@ public class RunElevatorManualCommand extends Command{
 
 	@Override
 	protected void interrupted() {
-		// TODO Auto-generated method stub
 		
 	}
 }

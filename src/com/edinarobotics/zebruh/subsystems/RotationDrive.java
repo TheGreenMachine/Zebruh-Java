@@ -32,5 +32,4 @@ public class RotationDrive extends Subsystem1816 {
         }
         super.setDefaultCommand(command);
     }
-
 }

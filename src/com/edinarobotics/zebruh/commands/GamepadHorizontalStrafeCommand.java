@@ -9,22 +9,23 @@ import edu.wpi.first.wpilibj.command.Command;
 public class GamepadHorizontalStrafeCommand extends Command {
 	private Gamepad gamepad;
 	private HorizontalStrafe horizontalStrafe;
-	
-	public GamepadHorizontalStrafeCommand(Gamepad gamepad){
+
+	public GamepadHorizontalStrafeCommand(Gamepad gamepad) {
 		super("GamepadHorizontalStrafe");
 		horizontalStrafe = Components.getInstance().horizontalStrafe;
 		this.gamepad = gamepad;
 		requires(horizontalStrafe);
 	}
-	
+
 	@Override
 	protected void initialize() {
-		
+
 	}
 
 	@Override
 	protected void execute() {
-		double horizontalStrafe = gamepad.getGamepadAxisState().getLeftJoystick().getX();
+		double horizontalStrafe = gamepad.getGamepadAxisState()
+				.getLeftJoystick().getX();
 		this.horizontalStrafe.setHorizontalStrafe(horizontalStrafe);
 	}
 
@@ -35,12 +36,11 @@ public class GamepadHorizontalStrafeCommand extends Command {
 
 	@Override
 	protected void end() {
-		
+
 	}
 
 	@Override
 	protected void interrupted() {
-		
+
 	}
-	
 }

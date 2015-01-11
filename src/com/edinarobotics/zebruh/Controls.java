@@ -18,8 +18,7 @@ public class Controls {
 	        gamepadFilters.addElement(new DeadzoneFilter(0.1));
 	        gamepadFilters.addElement(new PowerFilter(2));
 	        GamepadFilterSet shootGamepadFilterSet = new GamepadFilterSet(gamepadFilters);
-	        gamepad = new FilteredGamepad(1, shootGamepadFilterSet);
-	        
+	        gamepad = new FilteredGamepad(1, shootGamepadFilterSet); 
 	    }
 	
 	 /**

@@ -11,7 +11,6 @@ import edu.wpi.first.wpilibj.IterativeRobot;
 import edu.wpi.first.wpilibj.command.Scheduler;
 
 public class Zebruh extends IterativeRobot {
-
 	private Drivetrain drivetrain;
 	private Elevator elevator;
 
@@ -22,7 +21,7 @@ public class Zebruh extends IterativeRobot {
 	}
 
 	public void autonomousPeriodic() {
-
+		
 	}
 
 	@Override
@@ -40,7 +39,6 @@ public class Zebruh extends IterativeRobot {
 
 	public void teleopPeriodic() {
 		Scheduler.getInstance().run();
-
 	}
 
 	@Override
@@ -57,5 +55,4 @@ public class Zebruh extends IterativeRobot {
 		drivetrain.setRotation(0.0);
 		drivetrain.setVerticalStrafe(0.0);
 	}
-
 }

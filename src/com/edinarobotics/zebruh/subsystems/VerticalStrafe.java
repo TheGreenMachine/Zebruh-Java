@@ -5,7 +5,6 @@ import com.edinarobotics.utils.subsystems.Subsystem1816;
 import edu.wpi.first.wpilibj.command.Command;
 
 public class VerticalStrafe extends Subsystem1816 {
-
 	private Drivetrain drivetrain;
 	private double verticalStrafe;
 
@@ -35,5 +34,4 @@ public class VerticalStrafe extends Subsystem1816 {
         }
         super.setDefaultCommand(command);
     }
-
 }
