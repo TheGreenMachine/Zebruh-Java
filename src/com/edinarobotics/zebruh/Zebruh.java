@@ -18,6 +18,7 @@ public class Zebruh extends IterativeRobot {
 		Controls.getInstance();
 		Components.getInstance();
 		drivetrain = Components.getInstance().drivetrain;
+		elevator = Components.getInstance().elevator;
 	}
 
 	public void autonomousPeriodic() {
@@ -33,8 +34,6 @@ public class Zebruh extends IterativeRobot {
 				.setDefaultCommand(new GamepadVerticalStrafeCommand(gamepad1));
 		Components.getInstance().horizontalStrafe
 				.setDefaultCommand(new GamepadHorizontalStrafeCommand(gamepad1));
-		drivetrain = Components.getInstance().drivetrain;
-		elevator = Components.getInstance().elevator;
 	}
 
 	public void teleopPeriodic() {
