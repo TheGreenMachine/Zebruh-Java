@@ -24,8 +24,7 @@ public class GamepadHorizontalStrafeCommand extends Command {
 
 	@Override
 	protected void execute() {
-		double horizontalStrafe = gamepad.getGamepadAxisState()
-				.getLeftJoystick().getX();
+		double horizontalStrafe = gamepad.getLeftJoystick().getX();
 		this.horizontalStrafe.setHorizontalStrafe(horizontalStrafe);
 	}
 

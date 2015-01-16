@@ -24,7 +24,7 @@ public class GamepadVerticalStrafeCommand extends Command {
 
 	@Override
 	protected void execute() {
-		double verticalStrafe = gamepad.getGamepadAxisState().getLeftJoystick().getY();
+		double verticalStrafe = gamepad.getLeftJoystick().getY();
 		this.verticalStrafe.setVerticalStrafe(verticalStrafe);
 	}
 
