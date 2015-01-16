@@ -15,11 +15,11 @@ public class Controls {
 	
 	 private Controls() {        
 	        Vector gamepadFilters = new Vector();
-	        gamepadFilters.addElement(new DeadzoneFilter(0.1));
-	        gamepadFilters.addElement(new PowerFilter(2));
-	        GamepadFilterSet shootGamepadFilterSet = new GamepadFilterSet(gamepadFilters);
-	        gamepad = new FilteredGamepad(1, shootGamepadFilterSet); 
-	    }
+	        gamepadFilters.add(new DeadzoneFilter(0.1));
+	        gamepadFilters.add(new PowerFilter(2));
+	        GamepadFilterSet driveGamepadFilterSet = new GamepadFilterSet(gamepadFilters);
+	        gamepad = new FilteredGamepad(1, driveGamepadFilterSet); 
+	 }
 	
 	 /**
      * Returns the proper instance of Controls. This method creates a new
