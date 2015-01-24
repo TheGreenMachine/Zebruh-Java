@@ -24,7 +24,7 @@ public class RunElevatorManualCommand extends Command{
 
 	@Override
 	protected void execute() {
-		elevator.setElevatorSpeed(isOverride);
+		//elevator.setElevatorSpeed(isOverride);
 	}
 
 	@Override

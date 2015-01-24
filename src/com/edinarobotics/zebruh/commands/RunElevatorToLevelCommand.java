@@ -7,9 +7,9 @@ import edu.wpi.first.wpilibj.command.Command;
 
 public class RunElevatorToLevelCommand extends Command{
 	private Elevator elevator;
-	private int level;
+	private Elevator.ElevatorLevel level;
 	
-	public RunElevatorToLevelCommand(int level) {
+	public RunElevatorToLevelCommand(Elevator.ElevatorLevel level) {
 		super("RunElevatorToLevel");
 		this.elevator = Components.getInstance().elevator;
 		this.level = level;
@@ -18,13 +18,12 @@ public class RunElevatorToLevelCommand extends Command{
 
 	@Override
 	protected void initialize() {
-		
+		elevator.setElevatorLevel(level);
 	}
 
 	@Override
 	protected void execute() {
-		elevator.setOverride(false);
-		elevator.setElevatorLevel(level);
+		
 	}
 
 	@Override
