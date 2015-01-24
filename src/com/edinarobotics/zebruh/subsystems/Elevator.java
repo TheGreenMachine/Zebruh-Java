@@ -7,107 +7,98 @@ import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.Encoder;
 
 public class Elevator extends Subsystem1816 {
-	private CANTalon elevatorCANTalon1, elevatorCANTalon2;
-	private Encoder elevatorEncoder;
-	private DigitalInput upperLimit, lowerLimit;
-	private double elevatorManualSpeed = 1.0;
-	private double elevatorAutoSpeed = 1.0;
-	private int lastLevel = 0;
-	private int targetLevel, currentEncoderCount,
-			targetEncoderCount;
-	private boolean isOverride;
 
-	public Elevator(int elevatorCANTalon1, int elevatorCANTalon2, int elevatorEncoderChannelA,
-			int elevatorEncoderChannelB, int upperLimit, int lowerLimit) {
-		this.elevatorCANTalon1 = new CANTalon(elevatorCANTalon1);
-		this.elevatorCANTalon2 = new CANTalon(elevatorCANTalon2);
-		this.elevatorEncoder = new Encoder(elevatorEncoderChannelA,
-				elevatorEncoderChannelB);
+	public CANTalon leftTalon, rightTalon;
+	public DigitalInput upperLimit, lowerLimit;
+	public Encoder elevatorEncoder; 
+	public ElevatorLevel targetLevel;
+	
+	private double teleOpElevatorSpeed = 1.0;
+	private double elevatorSpeed = 1.0;
+	private boolean isOverride = false;
+	private boolean hasBeenOverridden = false;
+	private boolean isCalibrated = false;
+	
+	public final int ELEVATOR_DEADZONE_TICKS = 666;
+			
+	public Elevator(int leftTalon, int rightTalon, int upperLimit, int lowerLimit, 
+			int channelA, int channelB) {
+		this.leftTalon = new CANTalon(leftTalon);
+		this.rightTalon = new CANTalon(rightTalon);
+		this.leftTalon.changeControlMode(CANTalon.ControlMode.Position);
 		this.upperLimit = new DigitalInput(upperLimit);
 		this.lowerLimit = new DigitalInput(lowerLimit);
-		isOverride = false;
-	}
-
-	public void setElevatorLevel(int targetLevel) {
-		isOverride = false;
-		if (lastLevel > targetLevel) {
-			this.targetLevel = lastLevel - targetLevel;
-			if(getEncoderCount() > targetEncoderCount)
-				elevatorAutoSpeed *= -1;
-		} else {
-			this.targetLevel = targetLevel - lastLevel;
-			if(getEncoderCount() < targetEncoderCount)
-			elevatorAutoSpeed *= -1;
-		}
-		lastLevel = targetLevel;
-		switch (this.targetLevel) {
-		//TODO: set target encoder ticks
-		case 0:
-			update();
-			break;
-		case 1:
-			update();
-			break;
-		case 2:
-			update();
-			break;
-		case 3:
-			update();
-			break;
-		case 4:
-			update();
-		case 5:
-			update();
-			break;
-		}
-	}
-
-	public void setElevatorSpeed(boolean isOverride) {
-		this.isOverride = isOverride;
-		elevatorCANTalon1.set(elevatorManualSpeed);
-		elevatorCANTalon2.set(elevatorManualSpeed);
-		update();
-	}
-
-	public void setOverride(boolean isOverride) {
-		this.isOverride = isOverride;
-	}
-
-	public boolean getOverride() {
-		return isOverride;
-	}
-
-	public int getEncoderCount() {
-		currentEncoderCount = elevatorEncoder.get();
-		return currentEncoderCount;
 	}
 	
-	public boolean getUpperLimit() {
-		return upperLimit.get();
+	public void setElevatorLevel(ElevatorLevel level) {
+		hasBeenOverridden = false;
+		isOverride = false;
+		targetLevel = level;
+		leftTalon.setPosition(targetLevel.encoderTicks);
+		rightTalon.setPosition(targetLevel.encoderTicks);
+		update();
 	}
-
-	public boolean getLowerLimit() {
-		return lowerLimit.get();
+	
+	public void setOverride(boolean isOverride) {
+		this.isOverride = isOverride;
+		update();
 	}
-
-	@Override
+	
+	public void setTeleOpElevatorSpeed(double speed){
+		teleOpElevatorSpeed = speed;
+		update();
+	}
+	
+	public enum ApproxPosition {
+		PUSH_BIN(0),
+		PUSH_TOTE(1),
+		PUSH_BIN_TOTE(2),
+		LANDFILL_AUTO(3);
+		
+		private int positionTicks;
+		
+		private ApproxPosition(int positionTicks) {
+			this.positionTicks = positionTicks;
+		}
+	}
+	
+	public enum ElevatorLevel {
+		A(0),
+		B(1),
+		C(2),
+		D(3),
+		E(4),
+		F(5);
+		
+		private int encoderTicks;
+		
+		private ElevatorLevel(int encoderTicks) {
+			this.encoderTicks = encoderTicks;
+		}
+	}
+	
 	public void update() {
-		if (isOverride) {
-			elevatorCANTalon1.set(elevatorManualSpeed);
-			elevatorCANTalon2.set(elevatorManualSpeed);
+		if(!isOverride && !hasBeenOverridden && isCalibrated){
+			if(elevatorEncoder.get() < targetLevel.encoderTicks) {
+				leftTalon.set(elevatorSpeed);
+				rightTalon.set(elevatorSpeed);
+			} else if (elevatorEncoder.get() > targetLevel.encoderTicks + ELEVATOR_DEADZONE_TICKS){
+				leftTalon.set(-elevatorSpeed);
+				rightTalon.set(-elevatorSpeed);
+			} else {
+				leftTalon.set(0.0);
+				rightTalon.set(0.0);
+			}
+		} else if(isOverride) {
+			hasBeenOverridden = true;
+			leftTalon.set(teleOpElevatorSpeed);
+			rightTalon.set(teleOpElevatorSpeed);
+		} else if (hasBeenOverridden){
+			leftTalon.set(0);
+			rightTalon.set(0);
 		} else {
-			if(getEncoderCount() > targetEncoderCount && !getLowerLimit()) {
-				elevatorCANTalon1.set(elevatorAutoSpeed);
-				elevatorCANTalon2.set(elevatorAutoSpeed);
-			}
-			else if(getEncoderCount() < targetEncoderCount && !getUpperLimit()) {
-				elevatorCANTalon1.set(elevatorAutoSpeed);
-				elevatorCANTalon2.set(elevatorAutoSpeed);
-			}
-			else {
-				elevatorCANTalon1.set(0.0);
-				elevatorCANTalon2.set(0.0);
-			}
+			leftTalon.set(0);
+			rightTalon.set(0);
 		}
 	}
 }
