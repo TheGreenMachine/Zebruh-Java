@@ -3,7 +3,6 @@ package com.edinarobotics.zebruh.subsystems;
 import com.edinarobotics.utils.subsystems.Subsystem1816;
 
 import edu.wpi.first.wpilibj.command.Command;
-import edu.wpi.first.wpilibj.interfaces.Potentiometer;
 
 public class HorizontalStrafe extends Subsystem1816 {
 	private Drivetrain drivetrain;
