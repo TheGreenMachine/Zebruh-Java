@@ -5,26 +5,25 @@ import com.edinarobotics.zebruh.subsystems.Elevator;
 
 import edu.wpi.first.wpilibj.command.Command;
 
-public class RunElevatorManualCommand extends Command{
+public class RunElevatorManualCommand extends Command {
+
 	private Elevator elevator;
-	private boolean isOverride;
-	
-	public RunElevatorManualCommand(Elevator elevator, boolean isOverride) {
+	private double speed;
+
+	public RunElevatorManualCommand(double speed) {
 		super("RunElevatorManual");
-		this.elevator = Components.getInstance().elevator;
-		this.elevator = elevator;
-		this.isOverride = isOverride;
+		elevator = Components.getInstance().elevator;
+		this.speed = speed;
 		requires(elevator);
 	}
 
 	@Override
 	protected void initialize() {
-		
+		elevator.setElevatorSpeed(speed);
 	}
 
 	@Override
 	protected void execute() {
-		//elevator.setElevatorSpeed(isOverride);
 	}
 
 	@Override
@@ -34,11 +33,12 @@ public class RunElevatorManualCommand extends Command{
 
 	@Override
 	protected void end() {
-		
 	}
 
 	@Override
 	protected void interrupted() {
+		// TODO Auto-generated method stub
 		
 	}
+
 }
