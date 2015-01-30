@@ -4,12 +4,12 @@ import com.edinarobotics.utils.gamepad.Gamepad;
 import com.edinarobotics.zebruh.commands.GamepadHorizontalStrafeCommand;
 import com.edinarobotics.zebruh.commands.GamepadRotationCommand;
 import com.edinarobotics.zebruh.commands.GamepadVerticalStrafeCommand;
-import com.edinarobotics.zebruh.commands.RunElevatorManualCommand;
 import com.edinarobotics.zebruh.subsystems.Drivetrain;
 import com.edinarobotics.zebruh.subsystems.Elevator;
 
 import edu.wpi.first.wpilibj.IterativeRobot;
 import edu.wpi.first.wpilibj.command.Scheduler;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class Zebruh extends IterativeRobot {
 	private Drivetrain drivetrain;
@@ -30,8 +30,6 @@ public class Zebruh extends IterativeRobot {
 	public void teleopInit() {
 		Gamepad gamepad1 = Controls.getInstance().gamepad;
 
-		Gamepad gamepadManual = Controls.getInstance().gamepad1;
-
 		Components.getInstance().rotationDrive
 				.setDefaultCommand(new GamepadRotationCommand(gamepad1));
 		Components.getInstance().verticalStrafe
@@ -42,7 +40,12 @@ public class Zebruh extends IterativeRobot {
 
 	public void teleopPeriodic() {
 		Scheduler.getInstance().run();
-		System.out.println(elevator.getEncoderTicks());
+		System.out.println("Encoder: " + elevator.getEncoderTicks());
+		double p = SmartDashboard.getNumber("DB/Slider 0");
+		double i = SmartDashboard.getNumber("DB/Slider 1");
+		double d = SmartDashboard.getNumber("DB/Slider 2");
+		Components.getInstance().elevator.setPID(p, i, d);
+		System.out.println("P: " + p + "  |   I: " + i + "  |    D: " + d);
 	}
 
 	@Override

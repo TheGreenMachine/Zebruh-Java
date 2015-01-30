@@ -6,7 +6,6 @@ import edu.wpi.first.wpilibj.CANTalon;
 import edu.wpi.first.wpilibj.CANTalon.ControlMode;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.CANTalon.FeedbackDevice;
-import edu.wpi.first.wpilibj.command.Command;
 
 public class Elevator extends Subsystem1816 {
 
@@ -68,6 +67,10 @@ public class Elevator extends Subsystem1816 {
 			talonA.setPID(p, i, d);
 		}
 		this.override = override;
+	}
+	
+	public void setPID(double p, double i, double d) {
+		talonA.setPID(p, i, d);
 	}
 	
 	public void setPosition(int position) {
