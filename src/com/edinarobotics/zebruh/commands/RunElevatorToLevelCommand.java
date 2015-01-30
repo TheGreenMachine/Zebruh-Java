@@ -5,13 +5,14 @@ import com.edinarobotics.zebruh.subsystems.Elevator;
 
 import edu.wpi.first.wpilibj.command.Command;
 
-public class RunElevatorToLevelCommand extends Command{
+public class RunElevatorToLevelCommand extends Command {
+
 	private Elevator elevator;
 	private Elevator.ElevatorLevel level;
 	
 	public RunElevatorToLevelCommand(Elevator.ElevatorLevel level) {
 		super("RunElevatorToLevel");
-		this.elevator = Components.getInstance().elevator;
+		elevator = Components.getInstance().elevator;
 		this.level = level;
 		requires(elevator);
 	}
@@ -23,7 +24,6 @@ public class RunElevatorToLevelCommand extends Command{
 
 	@Override
 	protected void execute() {
-		
 	}
 
 	@Override
@@ -33,11 +33,12 @@ public class RunElevatorToLevelCommand extends Command{
 
 	@Override
 	protected void end() {
-		
 	}
 
 	@Override
 	protected void interrupted() {
+		// TODO Auto-generated method stub
 		
 	}
+
 }
