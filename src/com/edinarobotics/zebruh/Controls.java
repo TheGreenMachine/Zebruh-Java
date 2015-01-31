@@ -18,6 +18,8 @@ public class Controls {
 	public final Gamepad gamepad;
 	public final Gamepad gamepad1;
 	
+	private static final double MANUAL_SPEED = .25;
+	
 	 private Controls() {        
 	        Vector gamepadFilters = new Vector();
 	        gamepadFilters.add(new DeadzoneFilter(0.1));
@@ -43,9 +45,9 @@ public class Controls {
 		    gamepad1.rightTrigger().whenPressed(new RunElevatorToLevelCommand(Elevator.ElevatorLevel.F));
 		    gamepad1.leftBumper().whenPressed(new RunElevatorToLevelCommand(Elevator.ElevatorLevel.G));
 		    
-		    gamepad.diamondUp().whileHeld(new RunElevatorManualCommand(0.5));
+		    gamepad.diamondUp().whenPressed(new RunElevatorManualCommand(0.25));
 		    gamepad.diamondUp().whenReleased(new RunElevatorManualCommand(0.0));
-		    gamepad.diamondDown().whileHeld(new RunElevatorManualCommand(-0.5));
+		    gamepad.diamondDown().whenPressed(new RunElevatorManualCommand(-0.25));
 		    gamepad.diamondDown().whenReleased(new RunElevatorManualCommand(0.0));
 		    
 		    

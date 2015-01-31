@@ -31,7 +31,7 @@ public class Components {
 		private static final int ELEVATOR_CANTALON1 = 1;
 		private static final int ELEVATOR_CANTALON2 = 6;
 		
-		private static final int LIMIT_SWITCH_1 = 1;
+		private static final int LIMIT_SWITCH_1 = 0;
 		private static final int LIMIT_SWITCH_2 = 2;
 		private static final int LIMIT_SWITCH_3 = 3;
 		private static final int LIMIT_SWITCH_4 = 4;
@@ -45,12 +45,6 @@ public class Components {
 		private static final int ROTATE_SOLENOID_CHANNEL_B = 18;
 		
 	// End PWM Constants
-		
-	// Elevator PID Constants
-		private static final double P = 0.15;
-		private static final double I = 0.00001;
-		private static final double D = 3;
-	// End Elevator PID Constants
 
 	private Components() {
 		this.drivetrain = new Drivetrain(TOP_LEFT_CANTALON, TOP_RIGHT_CANTALON,
@@ -59,7 +53,7 @@ public class Components {
 		this.rotationDrive = new RotationDrive(drivetrain);
 		this.horizontalStrafe = new HorizontalStrafe(drivetrain);
 		this.verticalStrafe = new VerticalStrafe(drivetrain);
-		this.elevator = new Elevator(ELEVATOR_CANTALON1, ELEVATOR_CANTALON2, P, I, D, 
+		this.elevator = new Elevator(ELEVATOR_CANTALON1, ELEVATOR_CANTALON2, 
 				LIMIT_SWITCH_1, LIMIT_SWITCH_2, LIMIT_SWITCH_3, LIMIT_SWITCH_4);
 		//this.claw = new Claw(CLAW_SOLENOID_CHANNEL_A, CLAW_SOLENOID_CHANNEL_B, ROTATE_SOLENOID_CHANNEL_A, ROTATE_SOLENOID_CHANNEL_B);
 	}

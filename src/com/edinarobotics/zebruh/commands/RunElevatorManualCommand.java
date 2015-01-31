@@ -9,6 +9,7 @@ public class RunElevatorManualCommand extends Command {
 
 	private Elevator elevator;
 	private double speed;
+	private boolean isDone;
 
 	public RunElevatorManualCommand(double speed) {
 		super("RunElevatorManual");

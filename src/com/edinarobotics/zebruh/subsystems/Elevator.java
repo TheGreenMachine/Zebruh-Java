@@ -3,127 +3,85 @@ package com.edinarobotics.zebruh.subsystems;
 import com.edinarobotics.utils.subsystems.Subsystem1816;
 
 import edu.wpi.first.wpilibj.CANTalon;
-import edu.wpi.first.wpilibj.CANTalon.ControlMode;
 import edu.wpi.first.wpilibj.DigitalInput;
-import edu.wpi.first.wpilibj.CANTalon.FeedbackDevice;
+
 
 public class Elevator extends Subsystem1816 {
-
+	
 	private CANTalon talonA, talonB;
 	private DigitalInput ls1, ls2, ls3, ls4;
-	private ElevatorLevel targetLevel;
 	
-	private double teleOpElevatorSpeed = 1.0;
+	private final double P = 1.0;
+	private final double I = 0.0;
+	private final double D = 0.0;
 	
-	private boolean override;
-		
-	private double p, i, d;
-			
-	public Elevator(int leftTalon, int rightTalon, double p, double i, double d, 
-			int ls1, int ls2, int ls3, int ls4) {
-		talonA = new CANTalon(leftTalon);
-		talonB = new CANTalon(rightTalon);
-		talonA.enableControl();
-		talonB.enableControl();
+	private double speed;
+	private int targetTicks;
+	
+	public Elevator(int talonAChannel, int talonBChannel, int ls1Channel, int ls2Channel, 
+			int ls3Channel, int ls4Channel) {
+		talonA = new CANTalon(talonAChannel);
+		talonB = new CANTalon(talonBChannel);
+		ls1 = new DigitalInput(ls1Channel);
+		ls2 = new DigitalInput(ls2Channel);
+		ls3 = new DigitalInput(ls3Channel);
+		ls4 = new DigitalInput(ls4Channel);
 		talonA.changeControlMode(CANTalon.ControlMode.Position);
-		talonA.setFeedbackDevice(FeedbackDevice.QuadEncoder);
-		talonA.setPID(p, i, d);
-		this.p = p;
-		this.i = i;
-		this.d = d;
-		this.ls1 = new DigitalInput(ls1);
-		this.ls2 = new DigitalInput(ls2);
-		this.ls3 = new DigitalInput(ls3);
-		this.ls4 = new DigitalInput(ls4);
-		targetLevel = Elevator.ElevatorLevel.A;
-		override = false;
-		setPosition(0);
+		talonA.setFeedbackDevice(CANTalon.FeedbackDevice.QuadEncoder);
+		talonA.setPID(P, I, D);
 	}
 	
-	public void setElevatorLevel(ElevatorLevel level) {
-		setOverride(false);
-		targetLevel = level;
-		update();
+	public enum ElevatorState {
+		 BOTTOM(0),
+		 PICKUP(4000),
+		 ONE_TOTE(8000),
+		 TWO_TOTES(12000),
+		 THREE_TOTES(16000),
+		 TOP(20000);
+		 
+		 public int ticks;
+		 
+		 ElevatorState(int ticks) {
+			 this.ticks = ticks;
+		 }
 	}
 	
-	public int getEncoderTicks() {
-		return talonA.getEncPosition();
-	}
-	
-	public void setElevatorSpeed(double speed) {
-		setOverride(true);
-		teleOpElevatorSpeed = speed;
-		update();
-	}
-	
-	public Elevator.ElevatorLevel getTargetLevel() {
-		return targetLevel;
-	}
-	
-	public void setOverride(boolean override) {
-		talonA.changeControlMode(override ? ControlMode.PercentVbus : ControlMode.Position);
-		if(!override) {
-			talonA.setFeedbackDevice(FeedbackDevice.QuadEncoder);
-			talonA.setPID(p, i, d);
-		}
-		this.override = override;
-	}
-	
-	public void setPID(double p, double i, double d) {
-		talonA.setPID(p, i, d);
-	}
-	
-	public void setPosition(int position) {
-		talonA.setPosition(position);
-	}
-	
-	public enum ElevatorLevel {
-		A(4000),
-		B(8000),
-		C(12000),
-		D(16000),
-		E(20000),
-		F(24000),
-		G(0);
-		
-		private int encoderTicks;
-		
-		public int getEncoderTicks() {
-			return encoderTicks;
-		}
-		
-		private ElevatorLevel(int encoderTicks) {
-			this.encoderTicks = encoderTicks;
-		}
-	}
-	
-	public CANTalon getTalon() {
-		return talonA;
-	}
-	
-	public boolean getLS1() {
+	public boolean getLS1(){
 		return ls1.get();
 	}
 	
-	public boolean getLS2() {
+	public boolean getLS2(){
 		return ls2.get();
 	}
 	
-	public boolean getLS3() {
+	public boolean getLS3(){
 		return ls3.get();
 	}
 	
-	public boolean getLS4() {
+	public boolean getLS4(){
 		return ls4.get();
 	}
 	
+	public void setElevatorState(ElevatorState state){
+		targetTicks = state.ticks;
+		update();
+	}
+	
+	public void setElevatorSpeed(double speed) {
+		this.speed = speed;
+	}
+	
+	public void setPosition(int ticks){
+		talonA.setPosition(pos);
+	}
+	
+	public void setOverride() {
+		
+	}
+	
+	@Override
 	public void update() {
-		if(override) { //manual control mode
-			talonA.set(teleOpElevatorSpeed);
-			talonB.set(teleOpElevatorSpeed);
-		} else { //auto control mode
-			talonA.set(targetLevel.encoderTicks);
-			talonB.set(talonA.getOutputVoltage());
-		}
+		talonA.set(targetTicks);
+		talonB.set(talonA.getOutputVoltage());
 	}
 }
