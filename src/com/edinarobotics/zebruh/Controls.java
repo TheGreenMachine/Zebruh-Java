@@ -10,7 +10,6 @@ import com.edinarobotics.utils.gamepad.gamepadfilters.PowerFilter;
 import com.edinarobotics.zebruh.commands.RunElevatorManualCommand;
 import com.edinarobotics.zebruh.commands.RunElevatorToLevelCommand;
 import com.edinarobotics.zebruh.subsystems.Elevator;
-import com.edinarobotics.zebruh.subsystems.Elevator.ElevatorLevel;
 
 public class Controls {
 	private static Controls instance;
@@ -31,26 +30,25 @@ public class Controls {
 	        
 	        //Elevator control gamepad
 	        
+	        
+	        
 	        Vector elevatorGamepadFilters = new Vector();
 	        elevatorGamepadFilters.add(new DeadzoneFilter(0.1));
 	        elevatorGamepadFilters.add(new PowerFilter(2));
 	        GamepadFilterSet elevatorGamepadFilterSet = new GamepadFilterSet(elevatorGamepadFilters);
-	        gamepad1 = new FilteredGamepad(2,elevatorGamepadFilterSet);
+	        gamepad1 = new FilteredGamepad(2, elevatorGamepadFilterSet);
 	        
-		    gamepad1.diamondUp().whenPressed(new RunElevatorToLevelCommand(Elevator.ElevatorLevel.A));
-		    gamepad1.diamondRight().whenPressed(new RunElevatorToLevelCommand(Elevator.ElevatorLevel.B));
-		    gamepad1.diamondDown().whenPressed(new RunElevatorToLevelCommand(Elevator.ElevatorLevel.C));
-		    gamepad1.diamondLeft().whenPressed(new RunElevatorToLevelCommand(Elevator.ElevatorLevel.D));
-		    gamepad1.rightBumper().whenPressed(new RunElevatorToLevelCommand(Elevator.ElevatorLevel.E));
-		    gamepad1.rightTrigger().whenPressed(new RunElevatorToLevelCommand(Elevator.ElevatorLevel.F));
-		    gamepad1.leftBumper().whenPressed(new RunElevatorToLevelCommand(Elevator.ElevatorLevel.G));
+		    gamepad1.diamondUp().whenPressed(new RunElevatorToLevelCommand(Elevator.ElevatorLevel.BOTTOM));
+		    gamepad1.diamondRight().whenPressed(new RunElevatorToLevelCommand(Elevator.ElevatorLevel.PICKUP));
+		    gamepad1.diamondDown().whenPressed(new RunElevatorToLevelCommand(Elevator.ElevatorLevel.ONE_TOTE));
+		    gamepad1.diamondLeft().whenPressed(new RunElevatorToLevelCommand(Elevator.ElevatorLevel.TWO_TOTES));
+		    gamepad1.rightBumper().whenPressed(new RunElevatorToLevelCommand(Elevator.ElevatorLevel.THREE_TOTES));
+		    gamepad1.rightTrigger().whenPressed(new RunElevatorToLevelCommand(Elevator.ElevatorLevel.TOP));
 		    
-		    gamepad.diamondUp().whenPressed(new RunElevatorManualCommand(0.25));
-		    gamepad.diamondUp().whenReleased(new RunElevatorManualCommand(0.0));
-		    gamepad.diamondDown().whenPressed(new RunElevatorManualCommand(-0.25));
-		    gamepad.diamondDown().whenReleased(new RunElevatorManualCommand(0.0));
-		    
-		    
+		    gamepad1.leftBumper().whenPressed(new RunElevatorManualCommand(MANUAL_SPEED));
+		    gamepad1.leftBumper().whenReleased(new RunElevatorManualCommand(0.0));
+		    gamepad1.leftTrigger().whenPressed(new RunElevatorManualCommand(-MANUAL_SPEED));
+		    gamepad1.leftTrigger().whenReleased(new RunElevatorManualCommand(0.0));
 	 }
 	
 	 /**
