@@ -22,13 +22,13 @@ public class Components {
 		private static final int TOP_LEFT_CANTALON = 7;
 		private static final int TOP_RIGHT_CANTALON = 3;
 		private static final int BOTTOM_LEFT_CANTALON = 8;
-		private static final int BOTTOM_RIGHT_CANTALON = 4;
+		private static final int BOTTOM_RIGHT_CANTALON = 1;
 		private static final int MIDDLE_TOP_CANTALON = 2;
 		private static final int MIDDLE_BOTTOM_CANTALON = 5;
 		// End Drivetrain Constants
 		
 		//Elevator Constants
-		private static final int ELEVATOR_CANTALON1 = 1;
+		private static final int ELEVATOR_CANTALON1 = 4;
 		private static final int ELEVATOR_CANTALON2 = 6;
 		
 		private static final int LIMIT_SWITCH_1 = 0;
