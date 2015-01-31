@@ -11,12 +11,14 @@ public class Elevator extends Subsystem1816 {
 	private CANTalon talonA, talonB;
 	private DigitalInput ls1, ls2, ls3, ls4;
 	
-	private final double P = 1.0;
-	private final double I = 0.0;
-	private final double D = 0.0;
+	private final double P = .2;
+	private final double I = 0.00001;
+	private final double D = 2.0;
 	
 	private double speed;
-	private int targetTicks;
+	private Elevator.ElevatorLevel level;
+	private boolean isOverride;
+	private int currentTicks;
 	
 	public Elevator(int talonAChannel, int talonBChannel, int ls1Channel, int ls2Channel, 
 			int ls3Channel, int ls4Channel) {
@@ -29,9 +31,11 @@ public class Elevator extends Subsystem1816 {
 		talonA.changeControlMode(CANTalon.ControlMode.Position);
 		talonA.setFeedbackDevice(CANTalon.FeedbackDevice.QuadEncoder);
 		talonA.setPID(P, I, D);
+		level = ElevatorLevel.BOTTOM;
+		isOverride = false;
 	}
 	
-	public enum ElevatorState {
+	public enum ElevatorLevel {
 		 BOTTOM(0),
 		 PICKUP(4000),
 		 ONE_TOTE(8000),
@@ -41,9 +45,13 @@ public class Elevator extends Subsystem1816 {
 		 
 		 public int ticks;
 		 
-		 ElevatorState(int ticks) {
+		 ElevatorLevel(int ticks) {
 			 this.ticks = ticks;
 		 }
+	}
+	
+	public int getEncoderTicks() {
+		return talonA.getEncPosition();
 	}
 	
 	public boolean getLS1(){
@@ -62,26 +70,44 @@ public class Elevator extends Subsystem1816 {
 		return ls4.get();
 	}
 	
-	public void setElevatorState(ElevatorState state){
-		targetTicks = state.ticks;
+	public void setElevatorState(ElevatorLevel state){
+		setOverride(false);
+		level = state;
 		update();
 	}
 	
 	public void setElevatorSpeed(double speed) {
+		setOverride(true);
 		this.speed = speed;
+		if(this.speed == 0.0){
+			talonA.changeControlMode(CANTalon.ControlMode.Position);
+			currentTicks = talonA.getEncPosition();
+		}
+		update();
 	}
 	
 	public void setPosition(int ticks){
-		talonA.setPosition(pos);
+		talonA.setPosition(ticks);
 	}
 	
-	public void setOverride() {
-		
+	private void setOverride(boolean override) {
+		talonA.changeControlMode(override ? CANTalon.ControlMode.PercentVbus : CANTalon.ControlMode.Position);
+		isOverride = override;
 	}
 	
 	@Override
 	public void update() {
-		talonA.set(targetTicks);
-		talonB.set(talonA.getOutputVoltage());
+		if(isOverride){
+			if(speed == 0.0){
+				talonA.set(currentTicks);
+				talonB.set(talonA.getOutputVoltage());
+			} else {
+				talonA.set(speed);
+				talonB.set(speed);
+			}
+		} else {
+			talonA.set(level.ticks);
+			talonB.set(talonA.getOutputVoltage());
+		}
 	}
 }

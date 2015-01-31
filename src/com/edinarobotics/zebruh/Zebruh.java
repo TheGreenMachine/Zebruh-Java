@@ -40,7 +40,7 @@ public class Zebruh extends IterativeRobot {
 
 	public void teleopPeriodic() {
 		Scheduler.getInstance().run();
-		//System.out.println("Encoder: " + elevator.getEncoderTicks());
+		System.out.println("Encoder: " + elevator.getEncoderTicks());
 		/*double p = SmartDashboard.getNumber("DB/Slider 0");
 		double i = SmartDashboard.getNumber("DB/Slider 1");
 		double d = SmartDashboard.getNumber("DB/Slider 2");

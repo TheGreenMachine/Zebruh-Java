@@ -2,14 +2,14 @@ package com.edinarobotics.zebruh.commands;
 
 import com.edinarobotics.zebruh.Components;
 import com.edinarobotics.zebruh.subsystems.Elevator;
-import com.edinarobotics.zebruh.subsystems.Elevator.ElevatorState;
+import com.edinarobotics.zebruh.subsystems.Elevator.ElevatorLevel;
 
 import edu.wpi.first.wpilibj.command.Command;
 
 public class CalibrateElevatorCommand extends Command {
 
 	private Elevator elevator;
-	private ElevatorState level;
+	private ElevatorLevel level;
 	
 	public CalibrateElevatorCommand() {
 		super("CallibrateElevator");
@@ -29,23 +29,19 @@ public class CalibrateElevatorCommand extends Command {
 	@Override
 	protected boolean isFinished() {
 		if(elevator.getLS1()) {
-			level = ElevatorState.BOTTOM;
+			level = ElevatorLevel.BOTTOM;
 			return true;
 		} else if(elevator.getLS2()) {
-			level = ElevatorState.PICKUP;
+			level = ElevatorLevel.PICKUP;
 			return true;
 		} else if(elevator.getLS3()) {
-			level = ElevatorState.ONE_TOTE;
+			level = ElevatorLevel.ONE_TOTE;
 			return true;
 		} else if (elevator.getLS4()) {
-			level = ElevatorState.TOP;
+			level = ElevatorLevel.TOP;
 			return true;
 		}
 		return false;
-	}
-	
-	public String getHey(){
-		return "hey";
 	}
 
 	@Override

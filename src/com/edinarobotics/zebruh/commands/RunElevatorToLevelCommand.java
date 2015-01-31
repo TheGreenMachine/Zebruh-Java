@@ -2,15 +2,16 @@ package com.edinarobotics.zebruh.commands;
 
 import com.edinarobotics.zebruh.Components;
 import com.edinarobotics.zebruh.subsystems.Elevator;
+import com.edinarobotics.zebruh.subsystems.Elevator.ElevatorLevel;
 
 import edu.wpi.first.wpilibj.command.Command;
 
 public class RunElevatorToLevelCommand extends Command {
 
 	private Elevator elevator;
-	private Elevator.ElevatorLevel level;
+	private ElevatorLevel level;
 	
-	public RunElevatorToLevelCommand(Elevator.ElevatorLevel level) {
+	public RunElevatorToLevelCommand(ElevatorLevel level) {
 		super("RunElevatorToLevel");
 		elevator = Components.getInstance().elevator;
 		this.level = level;
@@ -19,7 +20,7 @@ public class RunElevatorToLevelCommand extends Command {
 
 	@Override
 	protected void initialize() {
-		elevator.setElevatorLevel(level);
+		elevator.setElevatorState(level);
 	}
 
 	@Override
