@@ -46,9 +46,9 @@ public class Controls {
 		    gamepad1.rightTrigger().whenPressed(new RunElevatorToLevelCommand(Elevator.ElevatorLevel.TOP));
 		    
 		    gamepad1.leftBumper().whenPressed(new RunElevatorManualCommand(MANUAL_SPEED));
-		    gamepad1.leftBumper().whenReleased(new RunElevatorManualCommand(0.0));
+		    gamepad1.leftBumper().whenReleased(new RunElevatorManualCommand(0.0, true));
 		    gamepad1.leftTrigger().whenPressed(new RunElevatorManualCommand(-MANUAL_SPEED));
-		    gamepad1.leftTrigger().whenReleased(new RunElevatorManualCommand(0.0));
+		    gamepad1.leftTrigger().whenReleased(new RunElevatorManualCommand(0.0, false));
 	 }
 	
 	 /**

@@ -1,6 +1,7 @@
 package com.edinarobotics.zebruh;
 
 import com.edinarobotics.utils.gamepad.Gamepad;
+import com.edinarobotics.zebruh.commands.CalibrateElevatorCommand;
 import com.edinarobotics.zebruh.commands.GamepadHorizontalStrafeCommand;
 import com.edinarobotics.zebruh.commands.GamepadRotationCommand;
 import com.edinarobotics.zebruh.commands.GamepadVerticalStrafeCommand;
@@ -9,7 +10,6 @@ import com.edinarobotics.zebruh.subsystems.Elevator;
 
 import edu.wpi.first.wpilibj.IterativeRobot;
 import edu.wpi.first.wpilibj.command.Scheduler;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class Zebruh extends IterativeRobot {
 	private Drivetrain drivetrain;
@@ -36,6 +36,9 @@ public class Zebruh extends IterativeRobot {
 				.setDefaultCommand(new GamepadVerticalStrafeCommand(gamepad1));
 		Components.getInstance().horizontalStrafe
 				.setDefaultCommand(new GamepadHorizontalStrafeCommand(gamepad1));
+		
+		CalibrateElevatorCommand calibration = new CalibrateElevatorCommand();
+		calibration.start();
 	}
 
 	public void teleopPeriodic() {

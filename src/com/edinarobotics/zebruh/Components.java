@@ -32,9 +32,9 @@ public class Components {
 		private static final int ELEVATOR_CANTALON2 = 6;
 		
 		private static final int LIMIT_SWITCH_1 = 0;
-		private static final int LIMIT_SWITCH_2 = 2;
-		private static final int LIMIT_SWITCH_3 = 3;
-		private static final int LIMIT_SWITCH_4 = 4;
+		private static final int LIMIT_SWITCH_2 = 1;
+		private static final int LIMIT_SWITCH_3 = 2;
+		private static final int LIMIT_SWITCH_4 = 3;
 		
 		//End Elevator Constant
 		
