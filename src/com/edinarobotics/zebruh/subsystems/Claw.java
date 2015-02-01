@@ -7,10 +7,8 @@ import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 
 public class Claw extends Subsystem1816 {
 
-	private DoubleSolenoid clampSolenoid;
-	private DoubleSolenoid rotateSolenoid;
-	private DoubleSolenoid.Value clampValue;
-	private DoubleSolenoid.Value rotateValue;
+	private DoubleSolenoid clampSolenoid, rotateSolenoid;
+	private DoubleSolenoid.Value clampValue, rotateValue;
 	
 	public Claw(int clampChannel1, int clampChannel2, int rotateChannel1, int rotateChannel2) {
 		this.clampSolenoid = new DoubleSolenoid(clampChannel1,clampChannel2);
