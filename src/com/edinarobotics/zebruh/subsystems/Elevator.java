@@ -5,15 +5,14 @@ import com.edinarobotics.utils.subsystems.Subsystem1816;
 import edu.wpi.first.wpilibj.CANTalon;
 import edu.wpi.first.wpilibj.DigitalInput;
 
-
 public class Elevator extends Subsystem1816 {
 	
 	private CANTalon talonA, talonB;
 	private DigitalInput ls1, ls2, ls3, ls4;
 	
-	private final double P = .2;
-	private final double I = 0.00001;
-	private final double D = 2.0;
+	private final double P = .1;
+	private final double I = 0.0;
+	private final double D = 3.0;
 	
 	private double speed;
 	private Elevator.ElevatorLevel level;
@@ -31,8 +30,9 @@ public class Elevator extends Subsystem1816 {
 		talonA.changeControlMode(CANTalon.ControlMode.Position);
 		talonA.setFeedbackDevice(CANTalon.FeedbackDevice.QuadEncoder);
 		talonA.setPID(P, I, D);
-		level = ElevatorLevel.BOTTOM;
 		isOverride = false;
+		ElevatorLevel.setDefault(1000);
+		level = ElevatorLevel.DEFAULT;
 	}
 	
 	public enum ElevatorLevel {
@@ -41,12 +41,17 @@ public class Elevator extends Subsystem1816 {
 		 ONE_TOTE(8000),
 		 TWO_TOTES(12000),
 		 THREE_TOTES(16000),
-		 TOP(20000);
+		 TOP(20000),
+		 DEFAULT(100);
 		 
 		 public int ticks;
 		 
 		 ElevatorLevel(int ticks) {
 			 this.ticks = ticks;
+		 }
+		 
+		 static public void setDefault(int ticks) {
+			 DEFAULT.ticks = ticks;
 		 }
 	}
 	
@@ -54,23 +59,23 @@ public class Elevator extends Subsystem1816 {
 		return talonA.getEncPosition();
 	}
 	
-	public boolean getLS1(){
+	public boolean getLS1() {
 		return ls1.get();
 	}
 	
-	public boolean getLS2(){
+	public boolean getLS2() {
 		return ls2.get();
 	}
 	
-	public boolean getLS3(){
+	public boolean getLS3() {
 		return ls3.get();
 	}
 	
-	public boolean getLS4(){
+	public boolean getLS4() {
 		return ls4.get();
 	}
 	
-	public void setElevatorState(ElevatorLevel state){
+	public void setElevatorState(ElevatorLevel state) {
 		setOverride(false);
 		level = state;
 		update();
@@ -79,14 +84,22 @@ public class Elevator extends Subsystem1816 {
 	public void setElevatorSpeed(double speed) {
 		setOverride(true);
 		this.speed = speed;
-		if(this.speed == 0.0){
-			talonA.changeControlMode(CANTalon.ControlMode.Position);
-			currentTicks = talonA.getEncPosition();
+		update();
+	}
+	
+	public void setElevatorSpeed(double speed, boolean wasUp) {
+		setOverride(true);
+		this.speed = speed;
+		talonA.changeControlMode(CANTalon.ControlMode.Position);
+		if(wasUp){
+			currentTicks = talonA.getEncPosition() + 150;
+		} else {
+			currentTicks = talonA.getEncPosition() - 150;
 		}
 		update();
 	}
 	
-	public void setPosition(int ticks){
+	public void setPosition(int ticks) {
 		talonA.setPosition(ticks);
 	}
 	
@@ -98,12 +111,20 @@ public class Elevator extends Subsystem1816 {
 	@Override
 	public void update() {
 		if(isOverride){
-			if(speed == 0.0){
-				talonA.set(currentTicks);
-				talonB.set(talonA.getOutputVoltage());
-			} else {
-				talonA.set(speed);
-				talonB.set(speed);
+			if(getLS1() && speed > 0.0){
+				talonA.set(0.0);
+				talonB.set(0.0);
+			} else if(getLS4() && speed < 0.0){
+				talonA.set(0.0);
+				talonB.set(0.0);
+			} else{
+				if(speed == 0.0){
+					talonA.set(currentTicks);
+					talonB.set(talonA.getOutputVoltage());
+				} else {
+					talonA.set(speed);
+					talonB.set(speed);
+				}
 			}
 		} else {
 			talonA.set(level.ticks);
