@@ -9,7 +9,7 @@ public class RunElevatorManualCommand extends Command {
 
 	private Elevator elevator;
 	private double speed;
-	private boolean isDone;
+	private boolean wasUp;
 
 	public RunElevatorManualCommand(double speed) {
 		super("RunElevatorManual");
@@ -17,10 +17,21 @@ public class RunElevatorManualCommand extends Command {
 		this.speed = speed;
 		requires(elevator);
 	}
+	
+	public RunElevatorManualCommand(double speed, boolean wasUp) {
+		super("RunElevatorManual");
+		elevator = Components.getInstance().elevator;
+		this.speed = speed;
+		this.wasUp = wasUp;
+		requires(elevator);
+	}
 
 	@Override
 	protected void initialize() {
-		elevator.setElevatorSpeed(speed);
+		if(speed != 0)
+			elevator.setElevatorSpeed(speed);
+		else
+			elevator.setElevatorSpeed(speed, wasUp);
 	}
 
 	@Override
