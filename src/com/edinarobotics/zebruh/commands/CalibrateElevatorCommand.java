@@ -20,7 +20,7 @@ public class CalibrateElevatorCommand extends Command {
 	
 	@Override
 	protected void initialize() {
-		elevator.setElevatorSpeed(-0.25);
+//		elevator.setElevatorSpeed(-0.25);
 	}
 
 	@Override
@@ -47,8 +47,8 @@ public class CalibrateElevatorCommand extends Command {
 
 	@Override
 	protected void end() {
-		elevator.setElevatorSpeed(0.0);
 		elevator.setPosition(level.ticks);
+		elevator.setElevatorState(level);
 		System.out.println("calibrated" + level.ticks);
 	}
 

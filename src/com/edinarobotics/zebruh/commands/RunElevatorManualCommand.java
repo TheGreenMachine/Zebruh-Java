@@ -8,30 +8,20 @@ import edu.wpi.first.wpilibj.command.Command;
 public class RunElevatorManualCommand extends Command {
 
 	private Elevator elevator;
-	private double speed;
-	private boolean wasUp;
-
-	public RunElevatorManualCommand(double speed) {
-		super("RunElevatorManual");
-		elevator = Components.getInstance().elevator;
-		this.speed = speed;
-		requires(elevator);
-	}
+	private int ticks;
+	private boolean isUp;
 	
-	public RunElevatorManualCommand(double speed, boolean wasUp) {
+	public RunElevatorManualCommand(int ticks, boolean isUp) {
 		super("RunElevatorManual");
 		elevator = Components.getInstance().elevator;
-		this.speed = speed;
-		this.wasUp = wasUp;
+		this.ticks = ticks;
+		this.isUp = isUp;
 		requires(elevator);
 	}
 
 	@Override
 	protected void initialize() {
-		if(speed != 0)
-			elevator.setElevatorSpeed(speed);
-		else
-			elevator.setElevatorSpeed(speed, wasUp);
+		elevator.setManualTicks(ticks, isUp);
 	}
 
 	@Override

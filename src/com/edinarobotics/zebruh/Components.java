@@ -39,10 +39,10 @@ public class Components {
 		//End Elevator Constant
 		
 		//Claw Constants
-		private static final int CLAW_SOLENOID_CHANNEL_A = 15;
-		private static final int CLAW_SOLENOID_CHANNEL_B = 16;
-		private static final int ROTATE_SOLENOID_CHANNEL_A = 17;
-		private static final int ROTATE_SOLENOID_CHANNEL_B = 18;
+		private static final int CLAW_SOLENOID_CHANNEL_A = 1;
+		private static final int CLAW_SOLENOID_CHANNEL_B = 2;
+		private static final int ROTATE_SOLENOID_CHANNEL_A = 3;
+		private static final int ROTATE_SOLENOID_CHANNEL_B = 4;
 		
 	// End PWM Constants
 

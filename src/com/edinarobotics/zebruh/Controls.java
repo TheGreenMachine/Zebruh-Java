@@ -9,8 +9,6 @@ import com.edinarobotics.utils.gamepad.gamepadfilters.GamepadFilterSet;
 import com.edinarobotics.utils.gamepad.gamepadfilters.PowerFilter;
 import com.edinarobotics.zebruh.commands.RunElevatorManualCommand;
 import com.edinarobotics.zebruh.commands.RunElevatorToLevelCommand;
-import com.edinarobotics.zebruh.commands.SetClawClampCommand;
-import com.edinarobotics.zebruh.commands.SetClawRotateCommand;
 import com.edinarobotics.zebruh.subsystems.Elevator;
 import com.edinarobotics.zebruh.subsystems.Claw.SolenoidState;
 
@@ -20,7 +18,7 @@ public class Controls {
 	public final Gamepad gamepad;
 	public final Gamepad gamepad1;
 
-	private static final double MANUAL_SPEED = .25;
+	private static final int MANUAL_TICKS = -250;
 
 	private Controls() {
 		// Drivetrain control
@@ -31,11 +29,10 @@ public class Controls {
 		GamepadFilterSet something = new GamepadFilterSet(gamepadFilters);
 		gamepad = new FilteredGamepad(1, driveGamepadFilterSet);
 		
-		gamepad.diamondUp().whenPressed(new SetClawRotateCommand(SolenoidState.ROTATE_UP));
-		gamepad.diamondDown().whenReleased(new SetClawRotateCommand(SolenoidState.ROTATE_DOWN));
-		gamepad.diamondRight().whenReleased(new SetClawClampCommand(SolenoidState.CLAMP_OPEN));
-		gamepad.diamondLeft().whenReleased(new SetClawClampCommand(SolenoidState.CLAMP_CLOSE));
-		
+//		gamepad.diamondUp().whenPressed(new SetClawRotateCommand(SolenoidState.ROTATE_UP));
+//		gamepad.diamondDown().whenReleased(new SetClawRotateCommand(SolenoidState.ROTATE_DOWN));
+//		gamepad.diamondRight().whenReleased(new SetClawClampCommand(SolenoidState.CLAMP_OPEN));
+//		gamepad.diamondLeft().whenReleased(new SetClawClampCommand(SolenoidState.CLAMP_CLOSE));
 		
 		
 		// Elevator control gamepad
@@ -52,10 +49,9 @@ public class Controls {
 		gamepad1.rightBumper().whenPressed(new RunElevatorToLevelCommand(Elevator.ElevatorLevel.THREE_TOTES));
 		gamepad1.rightTrigger().whenPressed(new RunElevatorToLevelCommand(Elevator.ElevatorLevel.TOP));
 
-		gamepad1.leftBumper().whenPressed(new RunElevatorManualCommand(MANUAL_SPEED));
-		gamepad1.leftBumper().whenReleased(new RunElevatorManualCommand(0.0, true));
-		gamepad1.leftTrigger().whenPressed(new RunElevatorManualCommand(-MANUAL_SPEED));
-		gamepad1.leftTrigger().whenReleased(new RunElevatorManualCommand(0.0, false));
+		gamepad1.leftBumper().whileHeld(new RunElevatorManualCommand(MANUAL_TICKS, true));
+		gamepad1.leftTrigger().whileHeld(new RunElevatorManualCommand(-MANUAL_TICKS, false));
+		
 	}
 
 	/**

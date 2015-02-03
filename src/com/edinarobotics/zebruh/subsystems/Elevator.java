@@ -10,14 +10,15 @@ public class Elevator extends Subsystem1816 {
 	private CANTalon talonA, talonB;
 	private DigitalInput ls1, ls2, ls3, ls4;
 	
-	private final double P = .1;
+	private final double P = 1.0;
 	private final double I = 0.0;
-	private final double D = 3.0;
+	private final double D = 0.0;
 	
-	private double speed;
 	private Elevator.ElevatorLevel level;
 	private boolean isOverride;
 	private int currentTicks;
+	private int pastTicks;
+	private boolean isUp;
 	
 	public Elevator(int talonAChannel, int talonBChannel, int ls1Channel, int ls2Channel, 
 			int ls3Channel, int ls4Channel) {
@@ -30,18 +31,20 @@ public class Elevator extends Subsystem1816 {
 		talonA.changeControlMode(CANTalon.ControlMode.Position);
 		talonA.setFeedbackDevice(CANTalon.FeedbackDevice.QuadEncoder);
 		talonA.setPID(P, I, D);
+		talonB.changeControlMode(CANTalon.ControlMode.Follower);
 		isOverride = false;
-		ElevatorLevel.setDefault(1000);
+//		level = ElevatorLevel.BOTTOM;
+		ElevatorLevel.setDefault(talonA.getEncPosition());
 		level = ElevatorLevel.DEFAULT;
 	}
 	
 	public enum ElevatorLevel {
 		 BOTTOM(0),
-		 PICKUP(4000),
-		 ONE_TOTE(8000),
-		 TWO_TOTES(12000),
-		 THREE_TOTES(16000),
-		 TOP(20000),
+		 PICKUP(-1000),
+		 ONE_TOTE(-2000),
+		 TWO_TOTES(-3000),
+		 THREE_TOTES(-4000),
+		 TOP(-5000),
 		 DEFAULT(100);
 		 
 		 public int ticks;
@@ -53,6 +56,10 @@ public class Elevator extends Subsystem1816 {
 		 static public void setDefault(int ticks) {
 			 DEFAULT.ticks = ticks;
 		 }
+	}
+	
+	public void printInformation(){
+		System.out.println("Encoder: " + getEncoderTicks() + "\tTalonA: " + talonA.getOutputVoltage() + "\tTalonB: " + talonB.getOutputVoltage() + "\tTalonA: " + talonA.getOutputCurrent() + "\tTalonB: " + talonB.getOutputCurrent());
 	}
 	
 	public int getEncoderTicks() {
@@ -81,54 +88,49 @@ public class Elevator extends Subsystem1816 {
 		update();
 	}
 	
-	public void setElevatorSpeed(double speed) {
+	public void setManualTicks(int ticks, boolean isUp){
 		setOverride(true);
-		this.speed = speed;
+		this.isUp = isUp;
+		pastTicks = talonA.getEncPosition();
+		currentTicks = talonA.getEncPosition() + ticks;
 		update();
 	}
 	
-	public void setElevatorSpeed(double speed, boolean wasUp) {
-		setOverride(true);
-		this.speed = speed;
-		talonA.changeControlMode(CANTalon.ControlMode.Position);
-		if(wasUp){
-			currentTicks = talonA.getEncPosition() + 150;
-		} else {
-			currentTicks = talonA.getEncPosition() - 150;
-		}
-		update();
-	}
+//	public void setElevatorSpeed(double speed, boolean wasUp) {
+//		setOverride(true);
+//		talonA.changeControlMode(CANTalon.ControlMode.Position);
+//		if(wasUp){
+//			currentTicks = talonA.getEncPosition() + 150;
+//		} else {
+//			currentTicks = talonA.getEncPosition() - 150;
+//		}
+//		update();
+//	}
 	
 	public void setPosition(int ticks) {
 		talonA.setPosition(ticks);
 	}
 	
 	private void setOverride(boolean override) {
-		talonA.changeControlMode(override ? CANTalon.ControlMode.PercentVbus : CANTalon.ControlMode.Position);
 		isOverride = override;
 	}
 	
 	@Override
 	public void update() {
 		if(isOverride){
-			if(getLS1() && speed > 0.0){
-				talonA.set(0.0);
-				talonB.set(0.0);
-			} else if(getLS4() && speed < 0.0){
-				talonA.set(0.0);
-				talonB.set(0.0);
+			if(getLS1() && !isUp){
+				talonA.set(pastTicks);
+				talonB.set(4);
+			} else if(getLS4() && isUp){
+				talonA.set(pastTicks);
+				talonB.set(4);
 			} else{
-				if(speed == 0.0){
-					talonA.set(currentTicks);
-					talonB.set(talonA.getOutputVoltage());
-				} else {
-					talonA.set(speed);
-					talonB.set(speed);
-				}
+				talonA.set(currentTicks);
+				talonB.set(4);
 			}
 		} else {
 			talonA.set(level.ticks);
-			talonB.set(talonA.getOutputVoltage());
+			talonB.set(4);
 		}
 	}
 }
