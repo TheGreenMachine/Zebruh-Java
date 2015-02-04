@@ -19,8 +19,8 @@ public class Elevator extends Subsystem1816 {
 	private final double D_DOWN = 0.0;
 	
 	private Elevator.ElevatorLevel level;
-	private boolean isOverride, isUpManual, isDownAuto;
-	private int currentTicks, pastTicks;
+	private boolean override, downAuto;
+	private int currentTicks;
 	
 	public Elevator(int talonAChannel, int talonBChannel, int ls1Channel, int ls2Channel, 
 			int ls3Channel, int ls4Channel) {
@@ -34,10 +34,10 @@ public class Elevator extends Subsystem1816 {
 		talonA.setFeedbackDevice(CANTalon.FeedbackDevice.QuadEncoder);
 		talonA.setPID(P_UP, I_UP, D_UP);
 		talonB.changeControlMode(CANTalon.ControlMode.Follower);
-		isOverride = false;
+		override = false;
 		ElevatorLevel.setDefault(talonA.getEncPosition());
 		level = ElevatorLevel.DEFAULT;
-		isDownAuto = false;
+		downAuto = false;
 	}
 	
 	public enum ElevatorLevel {
@@ -87,11 +87,11 @@ public class Elevator extends Subsystem1816 {
 	public void setElevatorState(ElevatorLevel state) {
 		setOverride(false);
 		if(level.ticks < state.ticks) {
-			isDownAuto = true;
+			downAuto = true;
 			talonA.setPID(P_DOWN, I_DOWN, D_DOWN);
 		}
 		else {
-			isDownAuto = false;
+			downAuto = false;
 			talonA.setPID(P_UP, I_UP, D_UP);
 		}
 		level = state;
@@ -109,11 +109,12 @@ public class Elevator extends Subsystem1816 {
 	
 	public void setManualTicks(int ticks, boolean isUp){
 		setOverride(true);
-		isUpManual = isUp;
 		talonA.setPID(P_DOWN, I_DOWN, D_DOWN);
-		pastTicks = talonA.getEncPosition();
-		currentTicks = talonA.getEncPosition() + ticks;
-		update();
+		
+		if((!getLS1() && !getLS4()) || ((getLS1() && isUp) || (getLS4() && !isUp))) {
+			currentTicks = talonA.getEncPosition() + ticks;
+			update();
+		}
 	}
 	
 	public void setElevatorDown(int ticks) {
@@ -127,25 +128,18 @@ public class Elevator extends Subsystem1816 {
 	}
 	
 	private void setOverride(boolean override) {
-		isOverride = override;
+		this.override = override;
 	}
 	
 	@Override
 	public void update() {
 		System.out.println(getEncoderTicks());
-		if(isOverride) {
-			if(getLS1() && !isUpManual) {
-				talonA.set(pastTicks);
-				talonB.set(4);
-			} else if(getLS4() && isUpManual) {
-				talonA.set(pastTicks);
-				talonB.set(4);
-			} else {
-				talonA.set(currentTicks);
-				talonB.set(4);
-			}
+		
+		if(override) {
+			talonA.set(currentTicks);
+			talonB.set(4);
 		} else {
-			if(!isDownAuto) {
+			if(!downAuto) {
 				System.out.println("Going up!");
 				talonA.set(level.ticks);
 				talonB.set(4);
