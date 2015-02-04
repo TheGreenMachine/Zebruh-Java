@@ -10,13 +10,13 @@ public class RunElevatorToLevelCommand extends Command {
 	
 	private Elevator elevator;
 	private ElevatorLevel level;
-	private boolean isAutoDown;
+	private boolean autoDown;
 	
 	public RunElevatorToLevelCommand(ElevatorLevel level) {
 		super("RunElevatorToLevel");
 		elevator = Components.getInstance().elevator;
 		this.level = level;
-		isAutoDown = false;
+		autoDown = false;
 		requires(elevator);
 	}
 
@@ -25,16 +25,16 @@ public class RunElevatorToLevelCommand extends Command {
 		//Remember, we are working with negative ticks. So everything is backwards.
 		elevator.setElevatorState(level);
 		if(elevator.getLevel().ticks < level.ticks) {
-			isAutoDown = false;
+			autoDown = false;
 		}
 		else
-			isAutoDown = true;
+			autoDown = true;
 	}
 
 	@Override
 	protected void execute() {
 		//This is positive because we are working with negative ticks
-		if(isAutoDown) {
+		if(autoDown) {
 			System.out.println(elevator.getEncoderTicks());
 			elevator.setElevatorDown(100); 
 		}
@@ -42,7 +42,7 @@ public class RunElevatorToLevelCommand extends Command {
 
 	@Override
 	protected boolean isFinished() {
-		if(!isAutoDown)
+		if(!autoDown)
 			return true;
 		else
 			return elevator.isDownAutoDone();
