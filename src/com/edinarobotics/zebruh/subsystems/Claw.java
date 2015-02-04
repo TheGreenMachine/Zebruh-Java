@@ -12,14 +12,14 @@ public class Claw extends Subsystem1816 {
 	private ClawState targetState;
 	
 	public Claw(int clampChannel1, int clampChannel2, int rotateChannel1, int rotateChannel2) {
-		this.clampSolenoid = new DoubleSolenoid(clampChannel1,clampChannel2);
-		this.rotateSolenoid = new DoubleSolenoid(rotateChannel1,rotateChannel2);
+		this.clampSolenoid = new DoubleSolenoid(clampChannel1, clampChannel2);
+		this.rotateSolenoid = new DoubleSolenoid(rotateChannel1, rotateChannel2);
 	}
 	
 	public enum ClawState {
-		CLAMP_DOWN_OPEN(DoubleSolenoid.Value.kForward,DoubleSolenoid.Value.kForward),
-		CLAMP_DOWN_CLOSE(DoubleSolenoid.Value.kReverse,DoubleSolenoid.Value.kForward),
-		CLAMP_UP_CLOSE(DoubleSolenoid.Value.kReverse,DoubleSolenoid.Value.kReverse);
+		CLAMP_DOWN_OPEN(DoubleSolenoid.Value.kForward, DoubleSolenoid.Value.kForward),
+		CLAMP_DOWN_CLOSE(DoubleSolenoid.Value.kReverse, DoubleSolenoid.Value.kForward),
+		CLAMP_UP_CLOSE(DoubleSolenoid.Value.kReverse, DoubleSolenoid.Value.kReverse);
 		
 		public DoubleSolenoid.Value clamp, rotate;
 		
@@ -29,7 +29,7 @@ public class Claw extends Subsystem1816 {
 		}
 	}
 	
-	public void setClawState(ClawState state){
+	public void setClawState(ClawState state) {
 			targetState = state;
 		}
 	
@@ -45,8 +45,6 @@ public class Claw extends Subsystem1816 {
 	public void update() {
 		clampSolenoid.set(targetState.clamp);		
 		rotateSolenoid.set(targetState.rotate);
-		
 	}
 
-	
 }
