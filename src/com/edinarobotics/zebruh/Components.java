@@ -7,6 +7,8 @@ import com.edinarobotics.zebruh.subsystems.HorizontalStrafe;
 import com.edinarobotics.zebruh.subsystems.RotationDrive;
 import com.edinarobotics.zebruh.subsystems.VerticalStrafe;
 
+import edu.wpi.first.wpilibj.Compressor;
+
 public class Components {
 	private static Components instance;
 
@@ -16,6 +18,7 @@ public class Components {
 	public VerticalStrafe verticalStrafe;
 	public Elevator elevator;
 	public Claw claw;
+	public Compressor compressor;
 	
 	// PWM Constants
 		// Drivetrain Constants
@@ -35,7 +38,6 @@ public class Components {
 		private static final int LIMIT_SWITCH_2 = 1;
 		private static final int LIMIT_SWITCH_3 = 2;
 		private static final int LIMIT_SWITCH_4 = 3;
-		
 		//End Elevator Constant
 		
 		//Claw Constants
@@ -43,19 +45,25 @@ public class Components {
 		private static final int CLAW_SOLENOID_CHANNEL_B = 2;
 		private static final int ROTATE_SOLENOID_CHANNEL_A = 3;
 		private static final int ROTATE_SOLENOID_CHANNEL_B = 4;
+		//End Claw Constants
+		
+		//Compressor
+		private static final int COMPRESSOR_CHANNEL = 0;
 		
 	// End PWM Constants
 
 	private Components() {
-		this.drivetrain = new Drivetrain(TOP_LEFT_CANTALON, TOP_RIGHT_CANTALON,
+		drivetrain = new Drivetrain(TOP_LEFT_CANTALON, TOP_RIGHT_CANTALON,
 				BOTTOM_LEFT_CANTALON, BOTTOM_RIGHT_CANTALON,
 				MIDDLE_TOP_CANTALON, MIDDLE_BOTTOM_CANTALON);
-		this.rotationDrive = new RotationDrive(drivetrain);
-		this.horizontalStrafe = new HorizontalStrafe(drivetrain);
-		this.verticalStrafe = new VerticalStrafe(drivetrain);
-		this.elevator = new Elevator(ELEVATOR_CANTALON1, ELEVATOR_CANTALON2, 
+		rotationDrive = new RotationDrive(drivetrain);
+		horizontalStrafe = new HorizontalStrafe(drivetrain);
+		verticalStrafe = new VerticalStrafe(drivetrain);
+		elevator = new Elevator(ELEVATOR_CANTALON1, ELEVATOR_CANTALON2, 
 				LIMIT_SWITCH_1, LIMIT_SWITCH_2, LIMIT_SWITCH_3, LIMIT_SWITCH_4);
-		//this.claw = new Claw(CLAW_SOLENOID_CHANNEL_A, CLAW_SOLENOID_CHANNEL_B, ROTATE_SOLENOID_CHANNEL_A, ROTATE_SOLENOID_CHANNEL_B);
+		claw = new Claw(CLAW_SOLENOID_CHANNEL_A, CLAW_SOLENOID_CHANNEL_B, ROTATE_SOLENOID_CHANNEL_A, ROTATE_SOLENOID_CHANNEL_B);
+		compressor = new Compressor(COMPRESSOR_CHANNEL);
+		compressor.start();
 	}
 
 	/**
