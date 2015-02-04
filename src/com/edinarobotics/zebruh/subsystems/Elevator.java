@@ -10,9 +10,13 @@ public class Elevator extends Subsystem1816 {
 	private CANTalon talonA, talonB;
 	private DigitalInput ls1, ls2, ls3, ls4;
 	
-	private final double P = 1.0;
-	private final double I = 0.0;
-	private final double D = 0.0;
+	private final double P_UP = 0.25;
+	private final double I_UP = 0.0001;
+	private final double D_UP = 0.0;
+	
+	private final double P_DOWN = 1;
+	private final double I_DOWN = 0.0;
+	private final double D_DOWN = 0.0;
 	
 	private Elevator.ElevatorLevel level;
 	private boolean isOverride, isUpManual, isDownAuto;
@@ -28,7 +32,7 @@ public class Elevator extends Subsystem1816 {
 		ls4 = new DigitalInput(ls4Channel);
 		talonA.changeControlMode(CANTalon.ControlMode.Position);
 		talonA.setFeedbackDevice(CANTalon.FeedbackDevice.QuadEncoder);
-		talonA.setPID(P, I, D);
+		talonA.setPID(P_UP, I_UP, D_UP);
 		talonB.changeControlMode(CANTalon.ControlMode.Follower);
 		isOverride = false;
 		ElevatorLevel.setDefault(talonA.getEncPosition());
@@ -42,7 +46,7 @@ public class Elevator extends Subsystem1816 {
 		 ONE_TOTE(-2000),
 		 TWO_TOTES(-3000),
 		 THREE_TOTES(-4000),
-		 TOP(-5000),
+		 TOP(-6500),
 		 DEFAULT(100);
 		 
 		 public int ticks;
@@ -82,10 +86,14 @@ public class Elevator extends Subsystem1816 {
 	
 	public void setElevatorState(ElevatorLevel state) {
 		setOverride(false);
-		if(level.ticks < state.ticks)
+		if(level.ticks < state.ticks) {
 			isDownAuto = true;
-		else
+			talonA.setPID(P_DOWN, I_DOWN, D_DOWN);
+		}
+		else {
 			isDownAuto = false;
+			talonA.setPID(P_UP, I_UP, D_UP);
+		}
 		level = state;
 		update();
 	}
@@ -102,6 +110,7 @@ public class Elevator extends Subsystem1816 {
 	public void setManualTicks(int ticks, boolean isUp){
 		setOverride(true);
 		isUpManual = isUp;
+		talonA.setPID(P_DOWN, I_DOWN, D_DOWN);
 		pastTicks = talonA.getEncPosition();
 		currentTicks = talonA.getEncPosition() + ticks;
 		update();
@@ -123,8 +132,9 @@ public class Elevator extends Subsystem1816 {
 	
 	@Override
 	public void update() {
-		if(isOverride){
-			if(getLS1() && !isUpManual){
+		System.out.println(getEncoderTicks());
+		if(isOverride) {
+			if(getLS1() && !isUpManual) {
 				talonA.set(pastTicks);
 				talonB.set(4);
 			} else if(getLS4() && isUpManual) {
