@@ -15,10 +15,8 @@ public class Elevator extends Subsystem1816 {
 	private final double D = 0.0;
 	
 	private Elevator.ElevatorLevel level;
-	private boolean isOverride;
-	private int currentTicks;
-	private int pastTicks;
-	private boolean isUp;
+	private boolean isOverride, isUpManual, isDownAuto;
+	private int currentTicks, pastTicks;
 	
 	public Elevator(int talonAChannel, int talonBChannel, int ls1Channel, int ls2Channel, 
 			int ls3Channel, int ls4Channel) {
@@ -33,9 +31,9 @@ public class Elevator extends Subsystem1816 {
 		talonA.setPID(P, I, D);
 		talonB.changeControlMode(CANTalon.ControlMode.Follower);
 		isOverride = false;
-//		level = ElevatorLevel.BOTTOM;
 		ElevatorLevel.setDefault(talonA.getEncPosition());
 		level = ElevatorLevel.DEFAULT;
+		isDownAuto = false;
 	}
 	
 	public enum ElevatorLevel {
@@ -59,7 +57,7 @@ public class Elevator extends Subsystem1816 {
 	}
 	
 	public void printInformation(){
-		System.out.println("Encoder: " + getEncoderTicks() + "\tTalonA: " + talonA.getOutputVoltage() + "\tTalonB: " + talonB.getOutputVoltage() + "\tTalonA: " + talonA.getOutputCurrent() + "\tTalonB: " + talonB.getOutputCurrent());
+//		System.out.println("Encoder: " + getEncoderTicks() + "\tTalonA: " + talonA.getOutputVoltage() + "\tTalonB: " + talonB.getOutputVoltage() + "\tTalonA: " + talonA.getOutputCurrent() + "\tTalonB: " + talonB.getOutputCurrent());
 	}
 	
 	public int getEncoderTicks() {
@@ -84,28 +82,36 @@ public class Elevator extends Subsystem1816 {
 	
 	public void setElevatorState(ElevatorLevel state) {
 		setOverride(false);
+		if(level.ticks < state.ticks)
+			isDownAuto = true;
+		else
+			isDownAuto = false;
 		level = state;
 		update();
 	}
 	
+	public Elevator.ElevatorLevel getLevel() {
+		return level;
+	}
+	
+	public boolean isDownAutoDone() {
+		//Remember, we are working with negative ticks. So everything is backwards.
+		return talonA.getEncPosition() > level.ticks;
+	}
+	
 	public void setManualTicks(int ticks, boolean isUp){
 		setOverride(true);
-		this.isUp = isUp;
+		isUpManual = isUp;
 		pastTicks = talonA.getEncPosition();
 		currentTicks = talonA.getEncPosition() + ticks;
 		update();
 	}
 	
-//	public void setElevatorSpeed(double speed, boolean wasUp) {
-//		setOverride(true);
-//		talonA.changeControlMode(CANTalon.ControlMode.Position);
-//		if(wasUp){
-//			currentTicks = talonA.getEncPosition() + 150;
-//		} else {
-//			currentTicks = talonA.getEncPosition() - 150;
-//		}
-//		update();
-//	}
+	public void setElevatorDown(int ticks) {
+		setOverride(false);
+		currentTicks = talonA.getEncPosition() + ticks;
+		update();
+	}
 	
 	public void setPosition(int ticks) {
 		talonA.setPosition(ticks);
@@ -118,19 +124,26 @@ public class Elevator extends Subsystem1816 {
 	@Override
 	public void update() {
 		if(isOverride){
-			if(getLS1() && !isUp){
+			if(getLS1() && !isUpManual){
 				talonA.set(pastTicks);
 				talonB.set(4);
-			} else if(getLS4() && isUp){
+			} else if(getLS4() && isUpManual) {
 				talonA.set(pastTicks);
 				talonB.set(4);
-			} else{
+			} else {
 				talonA.set(currentTicks);
 				talonB.set(4);
 			}
 		} else {
-			talonA.set(level.ticks);
-			talonB.set(4);
+			if(!isDownAuto) {
+				System.out.println("Going up!");
+				talonA.set(level.ticks);
+				talonB.set(4);
+			} else {
+				System.out.println("Going down!");
+				talonA.set(currentTicks);
+				talonB.set(4);
+			}
 		}
 	}
 }
