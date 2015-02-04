@@ -7,49 +7,45 @@ import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 
 public class Claw extends Subsystem1816 {
 
-	private DoubleSolenoid clampSolenoid, rotateSolenoid;
-	private DoubleSolenoid.Value clampValue, rotateValue;
+	private DoubleSolenoid clampSolenoid;
+	private DoubleSolenoid rotateSolenoid;
+	private ClawState targetState;
 	
 	public Claw(int clampChannel1, int clampChannel2, int rotateChannel1, int rotateChannel2) {
 		this.clampSolenoid = new DoubleSolenoid(clampChannel1,clampChannel2);
 		this.rotateSolenoid = new DoubleSolenoid(rotateChannel1,rotateChannel2);
+	}
+	
+	public enum ClawState {
+		CLAMP_DOWN_OPEN(DoubleSolenoid.Value.kForward,DoubleSolenoid.Value.kForward),
+		CLAMP_DOWN_CLOSE(DoubleSolenoid.Value.kReverse,DoubleSolenoid.Value.kForward),
+		CLAMP_UP_CLOSE(DoubleSolenoid.Value.kReverse,DoubleSolenoid.Value.kReverse);
 		
-	}
-	
-	public enum SolenoidState {
-		CLAMP_OPEN, CLAMP_CLOSE, ROTATE_UP, ROTATE_DOWN;
-	}
-	
-	public void setState(SolenoidState state){
-		switch(state) {
-			case CLAMP_OPEN:
-				if(getRotateState() == DoubleSolenoid.Value.kReverse) 
-					clampValue = DoubleSolenoid.Value.kForward;
-				break;
-			case CLAMP_CLOSE:
-				clampValue = DoubleSolenoid.Value.kReverse;
-				break;
-			case ROTATE_UP:
-				rotateValue = DoubleSolenoid.Value.kForward;
-				break;
-			case ROTATE_DOWN:
-				rotateValue = DoubleSolenoid.Value.kReverse;
-				break;
+		public DoubleSolenoid.Value clamp, rotate;
+		
+		private ClawState(DoubleSolenoid.Value clamp, DoubleSolenoid.Value rotate){
+			this.clamp = clamp;
+			this.rotate = rotate;
 		}
 	}
+	
+	public void setClawState(ClawState state){
+			targetState = state;
+		}
 	
 	public Value getClampState() {
 		return clampSolenoid.get();
 	}
 	
 	public Value getRotateState() {
-		return clampSolenoid.get();
+		return rotateSolenoid.get();
 	}
 	
 	@Override
 	public void update() {
-		clampSolenoid.set(clampValue);		
-		rotateSolenoid.set(rotateValue);
+		clampSolenoid.set(targetState.clamp);		
+		rotateSolenoid.set(targetState.rotate);
+		
 	}
 
 	
