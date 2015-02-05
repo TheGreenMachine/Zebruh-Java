@@ -2,6 +2,7 @@ package com.edinarobotics.zebruh.subsystems;
 
 import com.edinarobotics.utils.subsystems.Subsystem1816;
 
+import edu.wpi.first.wpilibj.AnalogInput;
 import edu.wpi.first.wpilibj.CANTalon;
 import edu.wpi.first.wpilibj.DigitalInput;
 
@@ -10,8 +11,8 @@ public class Elevator extends Subsystem1816 {
 	private CANTalon talonA, talonB;
 	private DigitalInput ls1, ls2, ls3, ls4;
 	
-	private final double P_UP = 0.25;
-	private final double I_UP = 0.0001;
+	private final double P_UP = 0.4;
+	private final double I_UP = 0.00001;
 	private final double D_UP = 0.0;
 	
 	private final double P_DOWN = 1;
@@ -22,10 +23,13 @@ public class Elevator extends Subsystem1816 {
 	private boolean override, downAuto;
 	private int currentTicks;
 	
+	private AnalogInput analog1;
+	
 	public Elevator(int talonAChannel, int talonBChannel, int ls1Channel, int ls2Channel, 
-			int ls3Channel, int ls4Channel) {
+			int ls3Channel, int ls4Channel, int analogChannel1) {
 		talonA = new CANTalon(talonAChannel);
 		talonB = new CANTalon(talonBChannel);
+		analog1 = new AnalogInput(analogChannel1);
 		ls1 = new DigitalInput(ls1Channel);
 		ls2 = new DigitalInput(ls2Channel);
 		ls3 = new DigitalInput(ls3Channel);
@@ -81,7 +85,11 @@ public class Elevator extends Subsystem1816 {
 	}
 	
 	public boolean getLS4() {
-		return ls4.get();
+		return !ls4.get();
+	}
+	
+	public double getAnalog1() {
+		return analog1.getVoltage();
 	}
 	
 	public void setElevatorState(ElevatorLevel state) {
@@ -133,20 +141,20 @@ public class Elevator extends Subsystem1816 {
 	
 	@Override
 	public void update() {
-		System.out.println(getEncoderTicks());
+		System.out.println("Target: " + level.ticks + "      Current: " + getEncoderTicks());
 		
 		if(override) {
 			talonA.set(currentTicks);
-			talonB.set(4);
+			talonB.set(talonA.getDeviceID());
 		} else {
 			if(!downAuto) {
 				System.out.println("Going up!");
 				talonA.set(level.ticks);
-				talonB.set(4);
+				talonB.set(talonA.getDeviceID());
 			} else {
 				System.out.println("Going down!");
 				talonA.set(currentTicks);
-				talonB.set(4);
+				talonB.set(talonA.getDeviceID());
 			}
 		}
 	}
