@@ -1,10 +1,12 @@
 package com.edinarobotics.zebruh.subsystems;
 
 import com.edinarobotics.utils.subsystems.Subsystem1816;
+import com.edinarobotics.zebruh.Components;
 
 import edu.wpi.first.wpilibj.AnalogInput;
 import edu.wpi.first.wpilibj.CANTalon;
 import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj.DoubleSolenoid;
 
 public class Elevator extends Subsystem1816 {
 	
@@ -25,6 +27,8 @@ public class Elevator extends Subsystem1816 {
 	
 	private AnalogInput analog1;
 	
+	private Claw claw;
+	
 	public Elevator(int talonAChannel, int talonBChannel, int ls1Channel, int ls2Channel, 
 			int ls3Channel, int ls4Channel, int analogChannel1) {
 		talonA = new CANTalon(talonAChannel);
@@ -42,6 +46,7 @@ public class Elevator extends Subsystem1816 {
 		ElevatorLevel.setDefault(talonA.getEncPosition());
 		level = ElevatorLevel.DEFAULT;
 		downAuto = false;
+		claw = Components.getInstance().claw;
 	}
 	
 	public enum ElevatorLevel {
@@ -149,6 +154,10 @@ public class Elevator extends Subsystem1816 {
 		} else {
 			if(!downAuto) {
 				System.out.println("Going up!");
+				if(claw.getRotateState() == DoubleSolenoid.Value.kReverse && level == ElevatorLevel.TOP) {
+					talonA.set(level.ticks);
+					talonB.set(talonA.getDeviceID());
+				}
 				talonA.set(level.ticks);
 				talonB.set(talonA.getDeviceID());
 			} else {

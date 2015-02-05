@@ -9,7 +9,6 @@ import com.edinarobotics.utils.gamepad.gamepadfilters.GamepadFilterSet;
 import com.edinarobotics.utils.gamepad.gamepadfilters.PowerFilter;
 import com.edinarobotics.zebruh.commands.RunElevatorManualCommand;
 import com.edinarobotics.zebruh.commands.RunElevatorToLevelCommand;
-import com.edinarobotics.zebruh.commands.SetClawCommand;
 import com.edinarobotics.zebruh.subsystems.Claw;
 import com.edinarobotics.zebruh.subsystems.Elevator;
 
@@ -30,9 +29,9 @@ public class Controls {
 		GamepadFilterSet something = new GamepadFilterSet(gamepadFilters);
 		gamepad = new FilteredGamepad(1, driveGamepadFilterSet);
 		
-		gamepad.leftBumper().whenPressed(new SetClawCommand(Claw.ClawState.CLAMP_DOWN_OPEN));
-	    gamepad.leftTrigger().whenPressed(new SetClawCommand(Claw.ClawState.CLAMP_DOWN_CLOSE));
-	    gamepad.rightBumper().whenPressed(new SetClawCommand(Claw.ClawState.CLAMP_UP_CLOSE));
+//		gamepad.leftBumper().whenPressed(new SetClawCommand(Claw.ClawState.CLAMP_DOWN_OPEN));
+//	    gamepad.leftTrigger().whenPressed(new SetClawCommand(Claw.ClawState.CLAMP_DOWN_CLOSE));
+//	    gamepad.rightBumper().whenPressed(new SetClawCommand(Claw.ClawState.CLAMP_UP_CLOSE));
 		
 		
 		// Elevator control gamepad
