@@ -10,7 +10,7 @@ public class DriveXTimeCommand extends Command {
 	private RotationDrive rotate;
 
 	public DriveXTimeCommand(double time, double speed) {
-		
+		setTimeout(time);
 	}
 	
 	@Override
