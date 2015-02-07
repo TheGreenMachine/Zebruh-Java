@@ -3,6 +3,7 @@ package com.edinarobotics.zebruh.subsystems;
 import com.edinarobotics.utils.subsystems.Subsystem1816;
 import com.edinarobotics.zebruh.Components;
 
+import edu.wpi.first.wpilibj.AnalogInput;
 import edu.wpi.first.wpilibj.CANTalon;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
@@ -14,8 +15,8 @@ public class Elevator extends Subsystem1816 {
 	
 	//private Claw claw;
 	
-	private final double P_UP = 1.0;
-	private final double I_UP = 0.0001;
+	private final double P_UP = 0.4;
+	private final double I_UP = 0.00001;
 	private final double D_UP = 0.0;
 	
 	private final double P_DOWN = 0.5;
@@ -28,6 +29,8 @@ public class Elevator extends Subsystem1816 {
 	private Elevator.ElevatorLevel level;
 	private boolean override, downAuto;
 	private int currentTicks;
+	
+	private Claw claw;
 	
 	public Elevator(int talonAChannel, int talonBChannel, int ls1Channel, int ls2Channel, 
 			int ls3Channel, int ls4Channel) {
@@ -47,6 +50,7 @@ public class Elevator extends Subsystem1816 {
 		level = ElevatorLevel.DEFAULT;
 		//claw = Components.getInstance().claw;
 		downAuto = false;
+//		claw = Components.getInstance().claw;
 	}
 	
 	public enum ElevatorLevel {
@@ -151,7 +155,7 @@ public class Elevator extends Subsystem1816 {
 	
 	@Override
 	public void update() {
-		System.out.println(getEncoderTicks());
+		System.out.println("Target: " + level.ticks + "      Current: " + getEncoderTicks());
 		
 		System.out.println("Limit 1: " + getLS1() + " Limit 4: " + getLS4());
 		
@@ -173,6 +177,7 @@ public class Elevator extends Subsystem1816 {
 			} else {
 				System.out.println("Going down!");
 				setTalons(currentTicks);
+
 			}
 		}
 		

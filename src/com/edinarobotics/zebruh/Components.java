@@ -33,11 +33,14 @@ public class Components {
 		//Elevator Constants
 		private static final int ELEVATOR_CANTALON1 = 8;
 		private static final int ELEVATOR_CANTALON2 = 7;
+
 		
 		private static final int LIMIT_SWITCH_1 = 0;
 		private static final int LIMIT_SWITCH_2 = 1;
 		private static final int LIMIT_SWITCH_3 = 2;
 		private static final int LIMIT_SWITCH_4 = 3;
+		
+		private static final int ANALOG_CHANNEL_1 = 0;
 		//End Elevator Constant
 		
 		//Claw Constants
@@ -61,7 +64,8 @@ public class Components {
 		verticalStrafe = new VerticalStrafe(drivetrain);
 		elevator = new Elevator(ELEVATOR_CANTALON1, ELEVATOR_CANTALON2, 
 				LIMIT_SWITCH_1, LIMIT_SWITCH_2, LIMIT_SWITCH_3, LIMIT_SWITCH_4);
-		//claw = new Claw(CLAW_SOLENOID_CHANNEL_A, CLAW_SOLENOID_CHANNEL_B, ROTATE_SOLENOID_CHANNEL_A, ROTATE_SOLENOID_CHANNEL_B);
+//		claw = new Claw(CLAW_SOLENOID_CHANNEL_A, CLAW_SOLENOID_CHANNEL_B, ROTATE_SOLENOID_CHANNEL_A, ROTATE_SOLENOID_CHANNEL_B);
+//				LIMIT_SWITCH_1, LIMIT_SWITCH_2, LIMIT_SWITCH_3, LIMIT_SWITCH_4, ANALOG_CHANNEL_1);
 		compressor = new Compressor(COMPRESSOR_CHANNEL);
 		compressor.start();
 	}
