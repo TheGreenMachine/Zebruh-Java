@@ -17,22 +17,22 @@ public class Components {
 	public HorizontalStrafe horizontalStrafe;
 	public VerticalStrafe verticalStrafe;
 	public Elevator elevator;
-	public Claw claw;
+	//public Claw claw;
 	public Compressor compressor;
 	
 	// PWM Constants
 		// Drivetrain Constants
-		private static final int TOP_LEFT_CANTALON = 7;
-		private static final int TOP_RIGHT_CANTALON = 3;
-		private static final int BOTTOM_LEFT_CANTALON = 8;
-		private static final int BOTTOM_RIGHT_CANTALON = 1;
+		private static final int TOP_LEFT_CANTALON = 3;
+		private static final int TOP_RIGHT_CANTALON = 1;
+		private static final int BOTTOM_LEFT_CANTALON = 4;
+		private static final int BOTTOM_RIGHT_CANTALON = 6;
 		private static final int MIDDLE_TOP_CANTALON = 2;
 		private static final int MIDDLE_BOTTOM_CANTALON = 5;
 		// End Drivetrain Constants
 		
 		//Elevator Constants
-		private static final int ELEVATOR_CANTALON1 = 4;
-		private static final int ELEVATOR_CANTALON2 = 6;
+		private static final int ELEVATOR_CANTALON1 = 8;
+		private static final int ELEVATOR_CANTALON2 = 7;
 		
 		private static final int LIMIT_SWITCH_1 = 0;
 		private static final int LIMIT_SWITCH_2 = 1;
@@ -41,14 +41,14 @@ public class Components {
 		//End Elevator Constant
 		
 		//Claw Constants
-		private static final int CLAW_SOLENOID_CHANNEL_A = 1;
-		private static final int CLAW_SOLENOID_CHANNEL_B = 2;
+		private static final int CLAW_SOLENOID_CHANNEL_A = 0;
+		private static final int CLAW_SOLENOID_CHANNEL_B = 1;
 		private static final int ROTATE_SOLENOID_CHANNEL_A = 3;
-		private static final int ROTATE_SOLENOID_CHANNEL_B = 4;
+		private static final int ROTATE_SOLENOID_CHANNEL_B = 2;
 		//End Claw Constants
 		
 		//Compressor
-		private static final int COMPRESSOR_CHANNEL = 0;
+		private static final int COMPRESSOR_CHANNEL = 10;
 		
 	// End PWM Constants
 
@@ -61,7 +61,7 @@ public class Components {
 		verticalStrafe = new VerticalStrafe(drivetrain);
 		elevator = new Elevator(ELEVATOR_CANTALON1, ELEVATOR_CANTALON2, 
 				LIMIT_SWITCH_1, LIMIT_SWITCH_2, LIMIT_SWITCH_3, LIMIT_SWITCH_4);
-		claw = new Claw(CLAW_SOLENOID_CHANNEL_A, CLAW_SOLENOID_CHANNEL_B, ROTATE_SOLENOID_CHANNEL_A, ROTATE_SOLENOID_CHANNEL_B);
+		//claw = new Claw(CLAW_SOLENOID_CHANNEL_A, CLAW_SOLENOID_CHANNEL_B, ROTATE_SOLENOID_CHANNEL_A, ROTATE_SOLENOID_CHANNEL_B);
 		compressor = new Compressor(COMPRESSOR_CHANNEL);
 		compressor.start();
 	}

@@ -1,46 +1,50 @@
 package com.edinarobotics.zebruh;
 
-import java.util.Vector;
+import java.util.ArrayList;
+import java.util.List;
 
 import com.edinarobotics.utils.gamepad.FilteredGamepad;
 import com.edinarobotics.utils.gamepad.Gamepad;
 import com.edinarobotics.utils.gamepad.gamepadfilters.DeadzoneFilter;
+import com.edinarobotics.utils.gamepad.gamepadfilters.GamepadFilter;
 import com.edinarobotics.utils.gamepad.gamepadfilters.GamepadFilterSet;
 import com.edinarobotics.utils.gamepad.gamepadfilters.PowerFilter;
 import com.edinarobotics.zebruh.commands.RunElevatorManualCommand;
 import com.edinarobotics.zebruh.commands.RunElevatorToLevelCommand;
-import com.edinarobotics.zebruh.commands.SetClawCommand;
+//import com.edinarobotics.zebruh.commands.RunElevatorManualCommand;
+//import com.edinarobotics.zebruh.commands.RunElevatorToLevelCommand;
+//import com.edinarobotics.zebruh.commands.SetClawCommand;
 import com.edinarobotics.zebruh.subsystems.Claw;
 import com.edinarobotics.zebruh.subsystems.Elevator;
 
 public class Controls {
 	private static Controls instance;
 
-	public final Gamepad gamepad;
+	public final Gamepad gamepad0;
 	public final Gamepad gamepad1;
-
+	
 	private static final int MANUAL_TICKS = -250;
 
 	private Controls() {
 		// Drivetrain control
-		Vector gamepadFilters = new Vector();
+
+		List<GamepadFilter> gamepadFilters = new ArrayList<GamepadFilter>();
 		gamepadFilters.add(new DeadzoneFilter(0.1));
 		gamepadFilters.add(new PowerFilter(2));
 		GamepadFilterSet driveGamepadFilterSet = new GamepadFilterSet(gamepadFilters);
-		GamepadFilterSet something = new GamepadFilterSet(gamepadFilters);
-		gamepad = new FilteredGamepad(1, driveGamepadFilterSet);
+		gamepad0 = new FilteredGamepad(0, driveGamepadFilterSet);
 		
-		gamepad.leftBumper().whenPressed(new SetClawCommand(Claw.ClawState.CLAMP_DOWN_OPEN));
-	    gamepad.leftTrigger().whenPressed(new SetClawCommand(Claw.ClawState.CLAMP_DOWN_CLOSE));
-	    gamepad.rightBumper().whenPressed(new SetClawCommand(Claw.ClawState.CLAMP_UP_CLOSE));
+//		gamepad0.leftBumper().whenPressed(new SetClawCommand(Claw.ClawState.CLAMP_DOWN_OPEN));
+//	    gamepad0.leftTrigger().whenPressed(new SetClawCommand(Claw.ClawState.CLAMP_DOWN_CLOSE));
+//	    gamepad0.rightBumper().whenPressed(new SetClawCommand(Claw.ClawState.CLAMP_UP_CLOSE));
 		
 		
 		// Elevator control gamepad
-		Vector elevatorGamepadFilters = new Vector();
-		elevatorGamepadFilters.add(new DeadzoneFilter(0.1));
-		elevatorGamepadFilters.add(new PowerFilter(2));
-		GamepadFilterSet elevatorGamepadFilterSet = new GamepadFilterSet(elevatorGamepadFilters);
-		gamepad1 = new FilteredGamepad(2, elevatorGamepadFilterSet);
+		List<GamepadFilter> filters = new ArrayList<GamepadFilter>();
+		filters.add(new DeadzoneFilter(0.1));
+		filters.add(new PowerFilter(2));
+		GamepadFilterSet elevatorGamepadFilterSet = new GamepadFilterSet(filters);
+		gamepad1 = new FilteredGamepad(1, elevatorGamepadFilterSet);
 
 		gamepad1.diamondUp().whenPressed(new RunElevatorToLevelCommand(Elevator.ElevatorLevel.BOTTOM));
 		gamepad1.diamondRight().whenPressed(new RunElevatorToLevelCommand(Elevator.ElevatorLevel.PICKUP));
@@ -51,7 +55,7 @@ public class Controls {
 
 		gamepad1.leftBumper().whileHeld(new RunElevatorManualCommand(MANUAL_TICKS, true));
 		gamepad1.leftTrigger().whileHeld(new RunElevatorManualCommand(-MANUAL_TICKS, false));
-		
+
 	}
 
 	/**
