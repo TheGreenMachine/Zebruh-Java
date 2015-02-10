@@ -47,7 +47,7 @@ public class CalibrateElevatorCommand extends Command {
 
 	@Override
 	protected void end() {
-		elevator.setPosition(level.ticks+250);
+		elevator.setPosition(level.ticks+25);
 		elevator.setElevatorState(level);
 		System.out.println("calibrated" + level.ticks);
 	}

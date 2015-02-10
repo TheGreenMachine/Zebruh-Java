@@ -1,9 +1,7 @@
 package com.edinarobotics.zebruh.subsystems;
 
 import com.edinarobotics.utils.subsystems.Subsystem1816;
-import com.edinarobotics.zebruh.Components;
 
-import edu.wpi.first.wpilibj.AnalogInput;
 import edu.wpi.first.wpilibj.CANTalon;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
@@ -13,7 +11,7 @@ public class Elevator extends Subsystem1816 {
 	private CANTalon talonA, talonB;
 	private DigitalInput ls1, ls2, ls3, ls4;
 	
-	//private Claw claw;
+	private Claw claw;
 	
 	private final double P_UP = 0.4;
 	private final double I_UP = 0.00001;
@@ -23,14 +21,17 @@ public class Elevator extends Subsystem1816 {
 	private final double I_DOWN = 0.0;
 	private final double D_DOWN = 0.0;
 	
+	private final double P_MANUAL_UP = 1.0;
+	private final double D_MANUAL_UP = 0.0;
+	private final double I_MANUAL_UP = 0.0;
+	
 	private int talonAChannel;
-	public static final int CLAW_UP_MAXIMUM_HEIGHT = 7000;
+	public static final int CLAW_UP_MAXIMUM_HEIGHT = -6600;
 	
 	private Elevator.ElevatorLevel level;
-	private boolean override, downAuto;
+	private boolean override, downAuto, downManual;
 	private int currentTicks;
 	
-	private Claw claw;
 	
 	public Elevator(int talonAChannel, int talonBChannel, int ls1Channel, int ls2Channel, 
 			int ls3Channel, int ls4Channel) {
@@ -48,15 +49,14 @@ public class Elevator extends Subsystem1816 {
 		override = false;
 		ElevatorLevel.setDefault(talonA.getEncPosition());
 		level = ElevatorLevel.DEFAULT;
-		//claw = Components.getInstance().claw;
 		downAuto = false;
-//		claw = Components.getInstance().claw;
 	}
 	
 	public enum ElevatorLevel {
 		 BOTTOM(0),
 		 PICKUP(-1000),
 		 ONE_TOTE(-2000),
+		 
 		 TWO_TOTES(-3000),
 		 THREE_TOTES(-4000),
 		 TOP(-7500),
@@ -74,7 +74,8 @@ public class Elevator extends Subsystem1816 {
 	}
 	
 	public void printInformation(){
-		System.out.println("Encoder: " + getEncoderTicks() + "\tTalonA: " + talonA.getOutputVoltage() + "\tTalonB: " + talonB.getOutputVoltage() + "\tTalonA: " + talonA.getOutputCurrent() + "\tTalonB: " + talonB.getOutputCurrent());
+		System.out.println(getLS1() + "                 " + getLS4());
+		System.out.println("Actual: " + getEncoderTicks() + "         Target: " + currentTicks);
 	}
 	
 	public int getEncoderTicks() {
@@ -102,13 +103,20 @@ public class Elevator extends Subsystem1816 {
 		if(level.ticks < state.ticks) {
 			downAuto = true;
 			talonA.setPID(P_DOWN, I_DOWN, D_DOWN);
-		}
-		else {
+		} else {
 			downAuto = false;
 			talonA.setPID(P_UP, I_UP, D_UP);
 		}
 		level = state;
 		update();
+	}
+	
+	public void setClaw(Claw claw){
+		this.claw = claw;
+	}
+	
+	public Claw getClaw(){
+		return claw;
 	}
 	
 	public Elevator.ElevatorLevel getLevel() {
@@ -125,11 +133,14 @@ public class Elevator extends Subsystem1816 {
 		
 		if((!getLS1() && !getLS4()) || ((getLS1() && isUp) || (getLS4() && !isUp))) {
 			if (ticks < 0){
-				talonA.setPID(P_UP, I_UP, D_UP);
+				downManual = false;
+				talonA.setPID(P_MANUAL_UP, I_MANUAL_UP, D_MANUAL_UP);
 			} else {
+				downManual = true;
 				talonA.setPID(P_DOWN, I_DOWN, D_DOWN);
 			}
-			currentTicks = talonA.getEncPosition() + ticks;
+			if(currentTicks > CLAW_UP_MAXIMUM_HEIGHT)
+				currentTicks = talonA.getEncPosition() + ticks;
 			update();
 		}
 	}
@@ -155,31 +166,32 @@ public class Elevator extends Subsystem1816 {
 	
 	@Override
 	public void update() {
-		System.out.println("Target: " + level.ticks + "      Current: " + getEncoderTicks());
-		
-		System.out.println("Limit 1: " + getLS1() + " Limit 4: " + getLS4());
+//		System.out.println("Target: " + level.ticks + "      Current: " + getEncoderTicks());
+//		System.out.println("Limit 1: " + getLS1() + " Limit 4: " + getLS4());
 		
 		if(override) {
-//			if (currentTicks >= CLAW_UP_MAXIMUM_HEIGHT && claw.getRotateState() == DoubleSolenoid.Value.kReverse){
-//				setTalons(CLAW_UP_MAXIMUM_HEIGHT);
-//			} else {
-				setTalons(currentTicks);
-//			}
+			if (currentTicks <= CLAW_UP_MAXIMUM_HEIGHT && claw.getRotateState() == DoubleSolenoid.Value.kReverse){
+				setTalons(CLAW_UP_MAXIMUM_HEIGHT);
+			} else {
+				if(!getLS4()) {
+					setTalons(currentTicks);
+				} else if(downManual) {
+					setTalons(currentTicks);
+				}
+			}
 		} else {
 			if(!downAuto) {
-//				if(level == ElevatorLevel.TOP && claw.getRotateState() == DoubleSolenoid.Value.kReverse) {
+				if(level == ElevatorLevel.TOP && claw.getRotateState() == DoubleSolenoid.Value.kReverse) {
 //					System.out.println("Going up to max claw height!");
-//					setTalons(ElevatorLevel.THREE_TOTES.ticks);
-//				} else {
-					System.out.println("Going up!");
+					setTalons(ElevatorLevel.THREE_TOTES.ticks);
+				} else {
+//					System.out.println("Going up!");
 					setTalons(level.ticks);
-//				}
+				}
 			} else {
-				System.out.println("Going down!");
-				setTalons(currentTicks);
-
+//				System.out.println("Going down!");
+					setTalons(currentTicks);
 			}
 		}
-		
 	}
 }
