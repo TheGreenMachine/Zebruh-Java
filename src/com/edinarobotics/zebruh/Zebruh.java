@@ -5,7 +5,7 @@ import com.edinarobotics.zebruh.commands.CalibrateElevatorCommand;
 import com.edinarobotics.zebruh.commands.GamepadHorizontalStrafeCommand;
 import com.edinarobotics.zebruh.commands.GamepadRotationCommand;
 import com.edinarobotics.zebruh.commands.GamepadVerticalStrafeCommand;
-import com.edinarobotics.zebruh.subsystems.Claw;
+//import com.edinarobotics.zebruh.subsystems.Claw;
 import com.edinarobotics.zebruh.subsystems.Drivetrain;
 import com.edinarobotics.zebruh.subsystems.Elevator;
 
@@ -16,7 +16,7 @@ import edu.wpi.first.wpilibj.command.Scheduler;
 
 public class Zebruh extends IterativeRobot {
 	private Drivetrain drivetrain;
-	private Claw claw;
+//	private Claw claw;
 	private Elevator elevator;
 
 	public void robotInit() {
@@ -44,13 +44,11 @@ public class Zebruh extends IterativeRobot {
 		
 		CalibrateElevatorCommand calibration = new CalibrateElevatorCommand();
 		calibration.start();
-		DoubleSolenoid d = new DoubleSolenoid(0, 1);
-		d.set(Value.kReverse);
 	}
 
 	public void teleopPeriodic() {
 		Scheduler.getInstance().run();
-		//elevator.printInformation();
+		elevator.printInformation();
 		/*double p = SmartDashboard.getNumber("DB/Slider 0");
 		double i = SmartDashboard.getNumber("DB/Slider 1");
 		double d = SmartDashboard.getNumber("DB/Slider 2");
