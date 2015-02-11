@@ -26,7 +26,7 @@ public class Elevator extends Subsystem1816 {
 	private final double I_MANUAL_UP = 0.0;
 	
 	private int talonAChannel;
-	public static final int CLAW_UP_MAXIMUM_HEIGHT = -6600;
+	public static final int CLAW_UP_MAXIMUM_HEIGHT = -6700;
 	
 	private Elevator.ElevatorLevel level;
 	private boolean override, downAuto, downManual;
@@ -140,6 +140,8 @@ public class Elevator extends Subsystem1816 {
 				talonA.setPID(P_DOWN, I_DOWN, D_DOWN);
 			}
 			if(currentTicks > CLAW_UP_MAXIMUM_HEIGHT)
+				currentTicks = talonA.getEncPosition() + ticks;
+			else if(currentTicks < CLAW_UP_MAXIMUM_HEIGHT)
 				currentTicks = talonA.getEncPosition() + ticks;
 			update();
 		}

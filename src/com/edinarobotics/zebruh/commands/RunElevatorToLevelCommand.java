@@ -24,9 +24,8 @@ public class RunElevatorToLevelCommand extends Command {
 	protected void initialize() {
 		//Remember, we are working with negative ticks. So everything is backwards.
 		elevator.setElevatorState(level);
-		if(elevator.getLevel().ticks < level.ticks) {
+		if(elevator.getLevel().ticks < level.ticks)
 			autoDown = false;
-		}
 		else
 			autoDown = true;
 	}
