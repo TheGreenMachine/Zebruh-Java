@@ -5,13 +5,12 @@ import com.edinarobotics.zebruh.subsystems.Drivetrain;
 
 import edu.wpi.first.wpilibj.command.Command;
 
-public class DriveXTimeVerticalCommand extends Command {
-	
-	private double speed;
+public class RotateXTimeCommand extends Command {
 	private Drivetrain drivetrain;
+	private double speed;
 
-	public DriveXTimeVerticalCommand(double time, double speed) {
-		super("drivextimevertical");
+	public RotateXTimeCommand(double time, double speed) {
+		super("drivextimerotate");
 		drivetrain = Components.getInstance().drivetrain;
 		this.speed = speed;
 		setTimeout(time);
@@ -25,7 +24,7 @@ public class DriveXTimeVerticalCommand extends Command {
 
 	@Override
 	protected void execute() {
-		drivetrain.setDrivetrain(speed, 0.0, 0.0);
+		drivetrain.setDrivetrain(0.0, 0.0, speed);
 	}
 
 	@Override
