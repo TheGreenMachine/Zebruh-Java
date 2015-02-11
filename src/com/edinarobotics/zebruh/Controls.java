@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.edinarobotics.utils.gamepad.FilteredGamepad;
-import com.edinarobotics.utils.gamepad.Gamepad;
+import com.edinarobotics.utils.gamepad.GamepadNew;
 import com.edinarobotics.utils.gamepad.gamepadfilters.DeadzoneFilter;
 import com.edinarobotics.utils.gamepad.gamepadfilters.GamepadFilter;
 import com.edinarobotics.utils.gamepad.gamepadfilters.GamepadFilterSet;
@@ -18,8 +18,8 @@ import com.edinarobotics.zebruh.subsystems.Elevator;
 public class Controls {
 	private static Controls instance;
 
-	public final Gamepad gamepad0;
-	public final Gamepad gamepad1;
+	public final GamepadNew gamepad0;
+	public final GamepadNew gamepad1;
 	
 	private static final int MANUAL_TICKS = -500;
 
@@ -28,7 +28,7 @@ public class Controls {
 
 		List<GamepadFilter> gamepadFilters = new ArrayList<GamepadFilter>();
 		gamepadFilters.add(new DeadzoneFilter(0.1));
-		gamepadFilters.add(new PowerFilter(2));
+		gamepadFilters.add(new PowerFilter(1));
 		GamepadFilterSet driveGamepadFilterSet = new GamepadFilterSet(gamepadFilters);
 		gamepad0 = new FilteredGamepad(0, driveGamepadFilterSet);
 		
@@ -37,10 +37,10 @@ public class Controls {
 	    gamepad0.rightBumper().whenPressed(new SetClawCommand(Claw.ClawState.CLAMP_UP_CLOSE));
 	
 		
-		// Elevator control gamepad
+		//Elevator control gamepad
 		List<GamepadFilter> filters = new ArrayList<GamepadFilter>();
 		filters.add(new DeadzoneFilter(0.1));
-		filters.add(new PowerFilter(2));
+		filters.add(new PowerFilter(1));
 		GamepadFilterSet elevatorGamepadFilterSet = new GamepadFilterSet(filters);
 		gamepad1 = new FilteredGamepad(1, elevatorGamepadFilterSet);
 
@@ -51,8 +51,8 @@ public class Controls {
 		gamepad1.rightBumper().whenPressed(new RunElevatorToLevelCommand(Elevator.ElevatorLevel.THREE_TOTES));
 		gamepad1.rightTrigger().whenPressed(new RunElevatorToLevelCommand(Elevator.ElevatorLevel.TOP));
 
-		gamepad1.leftBumper().whileHeld(new RunElevatorManualCommand(MANUAL_TICKS, true));
-		gamepad1.leftTrigger().whileHeld(new RunElevatorManualCommand(-MANUAL_TICKS, false));
+		gamepad1.dPadUp().whileHeld(new RunElevatorManualCommand(MANUAL_TICKS, true));
+		gamepad1.dPadDown().whileHeld(new RunElevatorManualCommand(-MANUAL_TICKS, false));
 
 	}
 

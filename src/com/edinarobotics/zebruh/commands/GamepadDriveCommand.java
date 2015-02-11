@@ -6,26 +6,28 @@ import com.edinarobotics.zebruh.subsystems.Drivetrain;
 
 import edu.wpi.first.wpilibj.command.Command;
 
-public class GamepadRotationCommand extends Command {
+public class GamepadDriveCommand extends Command {
+
 	private Drivetrain drivetrain;
 	private GamepadNew gamepad;
-
-	public GamepadRotationCommand(GamepadNew gamepad0) {
-		super("GamepadRotationCommand");
-		this.gamepad = gamepad0;
-		this.drivetrain = Components.getInstance().drivetrain;
+	
+	public GamepadDriveCommand(GamepadNew gamepad) {
+		super("gamepaddrivecommand");
+		this.gamepad = gamepad;
+		drivetrain = Components.getInstance().drivetrain;
 		requires(drivetrain);
 	}
-
+	
 	@Override
 	protected void initialize() {
-
 	}
 
 	@Override
 	protected void execute() {
 		double rotation = gamepad.getRightJoystick().getX();
-		drivetrain.setRotation(-rotation);
+		double horizontalStrafe = gamepad.getLeftJoystick().getX();
+		double verticalStrafe = gamepad.getLeftJoystick().getY();
+		drivetrain.setDrivetrain(verticalStrafe, horizontalStrafe, rotation);
 	}
 
 	@Override
@@ -35,11 +37,12 @@ public class GamepadRotationCommand extends Command {
 
 	@Override
 	protected void end() {
-
+		
 	}
 
 	@Override
 	protected void interrupted() {
-
+		
 	}
+
 }

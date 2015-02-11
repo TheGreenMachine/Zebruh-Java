@@ -1,20 +1,20 @@
 package com.edinarobotics.zebruh.commands;
 
-import com.edinarobotics.utils.gamepad.Gamepad;
+import com.edinarobotics.utils.gamepad.GamepadNew;
 import com.edinarobotics.zebruh.Components;
-import com.edinarobotics.zebruh.subsystems.VerticalStrafe;
+import com.edinarobotics.zebruh.subsystems.Drivetrain;
 
 import edu.wpi.first.wpilibj.command.Command;
 
 public class GamepadVerticalStrafeCommand extends Command {
-	private Gamepad gamepad;
-	private VerticalStrafe verticalStrafe;
+	private GamepadNew gamepad;
+	private Drivetrain drivetrain;
 
-	public GamepadVerticalStrafeCommand(Gamepad gamepad) {
+	public GamepadVerticalStrafeCommand(GamepadNew gamepad0) {
 		super("GamepadVerticalStrafe");
-		this.gamepad = gamepad;
-		verticalStrafe = Components.getInstance().verticalStrafe;
-		requires(verticalStrafe);
+		this.gamepad = gamepad0;
+		drivetrain = Components.getInstance().drivetrain;
+		requires(drivetrain);
 	}
 
 	@Override
@@ -25,7 +25,7 @@ public class GamepadVerticalStrafeCommand extends Command {
 	@Override
 	protected void execute() {
 		double verticalStrafe = gamepad.getLeftJoystick().getY();
-		this.verticalStrafe.setVerticalStrafe(verticalStrafe);
+		this.drivetrain.setVerticalStrafe(verticalStrafe);
 	}
 
 	@Override

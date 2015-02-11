@@ -13,9 +13,9 @@ public class Components {
 	private static Components instance;
 
 	public Drivetrain drivetrain;
-	public RotationDrive rotationDrive;
-	public HorizontalStrafe horizontalStrafe;
-	public VerticalStrafe verticalStrafe;
+//	public RotationDrive rotationDrive;
+//	public HorizontalStrafe horizontalStrafe;
+//	public VerticalStrafe verticalStrafe;
 	public Elevator elevator;
 	public Claw claw;
 	public Compressor compressor;
@@ -57,9 +57,9 @@ public class Components {
 		drivetrain = new Drivetrain(TOP_LEFT_CANTALON, TOP_RIGHT_CANTALON,
 				BOTTOM_LEFT_CANTALON, BOTTOM_RIGHT_CANTALON,
 				MIDDLE_TOP_CANTALON, MIDDLE_BOTTOM_CANTALON);
-		rotationDrive = new RotationDrive(drivetrain);
-		horizontalStrafe = new HorizontalStrafe(drivetrain);
-		verticalStrafe = new VerticalStrafe(drivetrain);
+//		rotationDrive = new RotationDrive(drivetrain);
+//		horizontalStrafe = new HorizontalStrafe(drivetrain);
+//		verticalStrafe = new VerticalStrafe(drivetrain);
 		elevator = new Elevator(ELEVATOR_CANTALON1, ELEVATOR_CANTALON2, 
 				LIMIT_SWITCH_1, LIMIT_SWITCH_2, LIMIT_SWITCH_3, LIMIT_SWITCH_4);
 		claw = new Claw(CLAW_SOLENOID_CHANNEL_A, CLAW_SOLENOID_CHANNEL_B, ROTATE_SOLENOID_CHANNEL_A, ROTATE_SOLENOID_CHANNEL_B, PCM_NODE_ID);

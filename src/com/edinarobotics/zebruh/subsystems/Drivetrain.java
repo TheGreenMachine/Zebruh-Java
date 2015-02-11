@@ -1,9 +1,11 @@
 package com.edinarobotics.zebruh.subsystems;
 
+
 import com.edinarobotics.utils.subsystems.Subsystem1816;
 
 import edu.wpi.first.wpilibj.CANTalon;
 import edu.wpi.first.wpilibj.CANTalon.ControlMode;
+import edu.wpi.first.wpilibj.command.Command;
 
 public class Drivetrain extends Subsystem1816 {
 	private CANTalon topLeft, topRight, bottomLeft, bottomRight;
@@ -39,9 +41,25 @@ public class Drivetrain extends Subsystem1816 {
 		this.rotation = setRotation;
 		update();
 	}
+	
+	public void setDrivetrain(double verticalStrafe, double horizontalStrafe, double rotation) {
+		this.verticalStrafe = verticalStrafe;
+		this.horizontalStrafe = horizontalStrafe;
+		this.rotation = rotation;
+		update();
+	}
+	
+	public void setDefaultCommand(Command command){
+        if(getDefaultCommand() != null){
+            super.getDefaultCommand().cancel();
+        }
+        super.setDefaultCommand(command);
+    }
 
 	@Override
 	public void update() {
 		hRobotDrive.hDrive(verticalStrafe, horizontalStrafe, rotation);
+		System.out.println("TopLeft: " + topLeft.get() + "      TopRight: " + topRight.get() + 
+				"     BottomRight: " + bottomRight.get() + "      BottomLeft: " + bottomLeft.get());
 	}
 }

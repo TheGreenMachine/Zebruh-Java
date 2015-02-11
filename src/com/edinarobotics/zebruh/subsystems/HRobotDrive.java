@@ -21,12 +21,7 @@ public class HRobotDrive extends RobotDrive {
 	
 	public void hDrive(double verticalStrafe, double horizontalStrafe, double rotation) {
 		arcadeDrive(-verticalStrafe, -rotation);
-		if(horizontalStrafe == 0 && verticalStrafe == 0){
-			middleBottom.set(rotation);
-			middleTop.set(rotation);
-		} else{
-			middleBottom.set(horizontalStrafe);
-			middleTop.set(-horizontalStrafe);
-		}
+		middleBottom.set(horizontalStrafe);
+		middleTop.set(-horizontalStrafe);
 	}
 }

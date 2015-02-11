@@ -1,20 +1,20 @@
 package com.edinarobotics.zebruh.commands;
 
-import com.edinarobotics.utils.gamepad.Gamepad;
+import com.edinarobotics.utils.gamepad.GamepadNew;
 import com.edinarobotics.zebruh.Components;
-import com.edinarobotics.zebruh.subsystems.HorizontalStrafe;
+import com.edinarobotics.zebruh.subsystems.Drivetrain;
 
 import edu.wpi.first.wpilibj.command.Command;
 
 public class GamepadHorizontalStrafeCommand extends Command {
-	private Gamepad gamepad;
-	private HorizontalStrafe horizontalStrafe;
+	private GamepadNew gamepad;
+	private Drivetrain drivetrain;
 
-	public GamepadHorizontalStrafeCommand(Gamepad gamepad) {
+	public GamepadHorizontalStrafeCommand(GamepadNew gamepad0) {
 		super("GamepadHorizontalStrafe");
-		horizontalStrafe = Components.getInstance().horizontalStrafe;
-		this.gamepad = gamepad;
-		requires(horizontalStrafe);
+		drivetrain = Components.getInstance().drivetrain;
+		this.gamepad = gamepad0;
+		requires(drivetrain);
 	}
 
 	@Override
@@ -25,7 +25,7 @@ public class GamepadHorizontalStrafeCommand extends Command {
 	@Override
 	protected void execute() {
 		double horizontalStrafe = gamepad.getLeftJoystick().getX();
-		this.horizontalStrafe.setHorizontalStrafe(horizontalStrafe);
+		drivetrain.setHorizontalStrafe(horizontalStrafe);
 	}
 
 	@Override
