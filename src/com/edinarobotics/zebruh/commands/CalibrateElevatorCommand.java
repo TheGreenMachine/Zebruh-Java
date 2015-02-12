@@ -15,6 +15,7 @@ public class CalibrateElevatorCommand extends Command {
 		super("CallibrateElevator");
 		elevator = Components.getInstance().elevator;
 		setInterruptible(false);
+//		setTimeout(0.5);
 		requires(elevator);
 	}
 	
@@ -47,7 +48,7 @@ public class CalibrateElevatorCommand extends Command {
 
 	@Override
 	protected void end() {
-		elevator.setPosition(level.ticks+25);
+		elevator.setPosition(level.ticks+400);
 		elevator.setElevatorState(level);
 		System.out.println("calibrated" + level.ticks);
 	}
