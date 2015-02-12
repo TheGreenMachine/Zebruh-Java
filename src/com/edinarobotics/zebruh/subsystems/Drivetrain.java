@@ -12,6 +12,8 @@ public class Drivetrain extends Subsystem1816 {
 	private double verticalStrafe, horizontalStrafe, rotation;
 
 	private HRobotDrive hRobotDrive;
+	
+	private final int RAMP_RATE = 100;
 
 	public Drivetrain(int topLeft, int topRight, int bottomLeft,
 			int bottomRight, int middleTop, int middleBottom) {
@@ -23,6 +25,10 @@ public class Drivetrain extends Subsystem1816 {
 		this.topRight.changeControlMode(ControlMode.PercentVbus);
 		this.bottomLeft.changeControlMode(ControlMode.PercentVbus);
 		this.bottomRight.changeControlMode(ControlMode.PercentVbus);
+		this.topLeft.setVoltageRampRate(RAMP_RATE);
+		this.topRight.setVoltageRampRate(RAMP_RATE);
+		this.bottomLeft.setVoltageRampRate(RAMP_RATE);
+		this.bottomRight.setVoltageRampRate(RAMP_RATE);
 		hRobotDrive = new HRobotDrive(this.topLeft, this.bottomLeft,
 				this.topRight, this.bottomRight, middleBottom, middleTop);
 	}
@@ -59,7 +65,7 @@ public class Drivetrain extends Subsystem1816 {
 	@Override
 	public void update() {
 		hRobotDrive.hDrive(verticalStrafe, horizontalStrafe, rotation);
-		System.out.println("TopLeft: " + topLeft.get() + "      TopRight: " + topRight.get() + 
-				"     BottomRight: " + bottomRight.get() + "      BottomLeft: " + bottomLeft.get());
+//		System.out.println("TopLeft: " + topLeft.get() + "      TopRight: " + topRight.get() + 
+//				"     BottomRight: " + bottomRight.get() + "      BottomLeft: " + bottomLeft.get());
 	}
 }
