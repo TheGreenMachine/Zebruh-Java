@@ -12,6 +12,8 @@ public class RunElevatorToLevelCommand extends Command {
 	private ElevatorLevel level;
 	private boolean autoDown;
 	
+	private final int DOWN_AUTO_TICKS = 200;
+	
 	public RunElevatorToLevelCommand(ElevatorLevel level) {
 		super("RunElevatorToLevel");
 		elevator = Components.getInstance().elevator;
@@ -35,7 +37,7 @@ public class RunElevatorToLevelCommand extends Command {
 		//This is positive because we are working with negative ticks
 		if(autoDown) {
 			System.out.println(elevator.getEncoderTicks());
-			elevator.setElevatorDown(100); 
+			elevator.setElevatorDown(DOWN_AUTO_TICKS); 
 		}
 	}
 
