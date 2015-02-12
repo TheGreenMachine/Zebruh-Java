@@ -20,7 +20,7 @@ public class HRobotDrive extends RobotDrive {
 	}
 	
 	public void hDrive(double verticalStrafe, double horizontalStrafe, double rotation) {
-		arcadeDrive(-verticalStrafe, -rotation);
+		arcadeDrive(-verticalStrafe, rotation);
 		middleBottom.set(horizontalStrafe);
 		middleTop.set(-horizontalStrafe);
 	}
