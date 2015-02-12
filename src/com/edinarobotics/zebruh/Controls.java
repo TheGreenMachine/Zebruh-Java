@@ -1,3 +1,4 @@
+
 package com.edinarobotics.zebruh;
 
 import java.util.ArrayList;
@@ -12,6 +13,7 @@ import com.edinarobotics.utils.gamepad.gamepadfilters.PowerFilter;
 import com.edinarobotics.zebruh.commands.RunElevatorManualCommand;
 import com.edinarobotics.zebruh.commands.RunElevatorToLevelCommand;
 import com.edinarobotics.zebruh.commands.SetClawCommand;
+import com.edinarobotics.zebruh.commands.SetDrivetrainCommand;
 import com.edinarobotics.zebruh.subsystems.Claw;
 import com.edinarobotics.zebruh.subsystems.Elevator;
 
@@ -22,9 +24,11 @@ public class Controls {
 	public final GamepadNew gamepad1;
 	
 	private static final int MANUAL_TICKS = -500;
+	private final double MANUAL_MOVEMENT = 0.5;
 
 	private Controls() {
 		// Drivetrain control
+		//hi eric
 
 		List<GamepadFilter> gamepadFilters = new ArrayList<GamepadFilter>();
 		gamepadFilters.add(new DeadzoneFilter(0.1));
@@ -35,8 +39,16 @@ public class Controls {
 		gamepad0.leftBumper().whenPressed(new SetClawCommand(Claw.ClawState.CLAMP_DOWN_OPEN));
 	    gamepad0.leftTrigger().whenPressed(new SetClawCommand(Claw.ClawState.CLAMP_DOWN_CLOSE));
 	    gamepad0.rightBumper().whenPressed(new SetClawCommand(Claw.ClawState.CLAMP_UP_CLOSE));
-	
-		
+	    
+	    gamepad0.dPadUp().whileHeld(new SetDrivetrainCommand(MANUAL_MOVEMENT, 0.0, 0.0));
+	    gamepad0.dPadUp().whenReleased(new SetDrivetrainCommand(0.0, 0.0, 0.0));
+	    gamepad0.dPadRight().whileHeld(new SetDrivetrainCommand(0.0, MANUAL_MOVEMENT, 0.0));
+	    gamepad0.dPadRight().whenReleased(new SetDrivetrainCommand(0.0, 0.0, 0.0));
+	    gamepad0.dPadDown().whileHeld(new SetDrivetrainCommand(-MANUAL_MOVEMENT, 0.0, 0.0));
+	    gamepad0.dPadDown().whenReleased(new SetDrivetrainCommand(0.0, 0.0, 0.0));
+	    gamepad0.dPadLeft().whileHeld(new SetDrivetrainCommand(0.0, -MANUAL_MOVEMENT, 0.0));
+	    gamepad0.dPadLeft().whenReleased(new SetDrivetrainCommand(0.0, 0.0, 0.0));
+	    
 		//Elevator control gamepad
 		List<GamepadFilter> filters = new ArrayList<GamepadFilter>();
 		filters.add(new DeadzoneFilter(0.1));
