@@ -26,7 +26,12 @@ public class Elevator extends Subsystem1816 {
 	private final double I_MANUAL_UP = 0.0;
 	
 	private int talonAChannel;
-	public static final int CLAW_UP_MAXIMUM_HEIGHT = -6700;
+	
+	public static final int CLAW_UP_MAXIMUM_HEIGHT = -6400;
+	
+	private double lowestTick;
+	
+	private final int MAXIMUM_TICKS = -7400;
 	private final int RAMP_RATE = 6;
 	
 	private Elevator.ElevatorLevel level;
@@ -58,12 +63,13 @@ public class Elevator extends Subsystem1816 {
 	
 	public enum ElevatorLevel {
 		 BOTTOM(0),
-		 PICKUP(-1000),
+		 PICKUP(-500),
 		 ONE_TOTE(-2000),
 		 TWO_TOTES(-3000),
 		 THREE_TOTES(-4000),
 		 TOP(-7000),
-		 DEFAULT(0);
+		 DEFAULT(0),
+		 BIN_PICKUP_AUTO(-1500);
 		 
 		 public int ticks;
 		 
@@ -87,6 +93,10 @@ public class Elevator extends Subsystem1816 {
 	
 	public int getEncoderTicks() {
 		return talonA.getEncPosition();
+	}
+	
+	public void setLowestTicks(int lowestTick) {
+		this.lowestTick = lowestTick;
 	}
 	
 	public boolean getLS1() {
@@ -194,13 +204,15 @@ public class Elevator extends Subsystem1816 {
 			System.out.println("LimitSwitch4 not on");
 			if(override) {
 				System.out.println("Manual Mode!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
-				if (currentTicks <= CLAW_UP_MAXIMUM_HEIGHT && claw.getRotateState() == DoubleSolenoid.Value.kReverse){
+				if (currentTicks <= CLAW_UP_MAXIMUM_HEIGHT && claw.getRotateState() == DoubleSolenoid.Value.kReverse && getLS3()){
 					setTalons(CLAW_UP_MAXIMUM_HEIGHT);
 				} else {
 					if(!getLS4()) {
 						setTalons(currentTicks);
-					} else if(downManual) {
+					} else if(downManual && currentTicks < lowestTick) {
 						setTalons(currentTicks);
+					} else if (getLS4()) {
+						setTalons(MAXIMUM_TICKS);
 					}
 				}
 			} else {

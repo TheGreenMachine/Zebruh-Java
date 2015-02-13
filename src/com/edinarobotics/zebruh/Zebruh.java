@@ -1,6 +1,8 @@
 package com.edinarobotics.zebruh;
 
+import com.edinarobotics.utils.commands.MaintainStateCommand;
 import com.edinarobotics.utils.gamepad.GamepadNew;
+import com.edinarobotics.zebruh.commands.AutonomousCommand;
 import com.edinarobotics.zebruh.commands.CalibrateElevatorCommand;
 import com.edinarobotics.zebruh.commands.GamepadDriveCommand;
 //import com.edinarobotics.zebruh.subsystems.Claw;
@@ -8,23 +10,39 @@ import com.edinarobotics.zebruh.subsystems.Drivetrain;
 import com.edinarobotics.zebruh.subsystems.Elevator;
 
 import edu.wpi.first.wpilibj.IterativeRobot;
+import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.command.Scheduler;
 
 public class Zebruh extends IterativeRobot {
 	private Drivetrain drivetrain;
 //	private Claw claw;
 	private Elevator elevator;
+	
+	private Command autonomousCommand;
 
 	public void robotInit() {
 		Controls.getInstance();
 		Components.getInstance();
 		drivetrain = Components.getInstance().drivetrain;
 		elevator = Components.getInstance().elevator;
+		
+		
 		//claw = Components.getInstance().claw;
 	}
-
-	public void autonomousPeriodic() {
+	
+	@Override
+	public void autonomousInit() {
+		Drivetrain drivetrain = Components.getInstance().drivetrain;
+		drivetrain.setDefaultCommand(new MaintainStateCommand(drivetrain));
 		
+		autonomousCommand = new AutonomousCommand(AutonomousCommand.AutoMode.BIN_TOTE);
+		
+		autonomousCommand.start();
+	}
+
+	@Override
+	public void autonomousPeriodic() {
+		Scheduler.getInstance().run();
 	}
 
 	@Override
@@ -37,12 +55,11 @@ public class Zebruh extends IterativeRobot {
 		CalibrateElevatorCommand calibration = new CalibrateElevatorCommand();
 		calibration.start();
 		
-		
 	}
 
 	public void teleopPeriodic() {
 		Scheduler.getInstance().run();
-//		elevator.printInformation();
+		//elevator.printInformation();
 		/*double p = SmartDashboard.getNumber("DB/Slider 0");
 		double i = SmartDashboard.getNumber("DB/Slider 1");
 		double d = SmartDashboard.getNumber("DB/Slider 2");

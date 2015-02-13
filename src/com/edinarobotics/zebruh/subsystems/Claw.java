@@ -16,13 +16,14 @@ public class Claw extends Subsystem1816 {
 	public Claw(int clampChannel1, int clampChannel2, int rotateChannel1, int rotateChannel2, int pcmNode) {
 		clampSolenoid = new DoubleSolenoid(pcmNode, clampChannel1, clampChannel2);
 		rotateSolenoid = new DoubleSolenoid(pcmNode, rotateChannel1, rotateChannel2);
-		targetState = ClawState.CLAMP_UP_CLOSE;
+		targetState = ClawState.CLAMP_UP_OPEN;
 	}
 	
 	public enum ClawState {
 		CLAMP_DOWN_OPEN(DoubleSolenoid.Value.kReverse, DoubleSolenoid.Value.kForward),
 		CLAMP_DOWN_CLOSE(DoubleSolenoid.Value.kForward, DoubleSolenoid.Value.kForward),
-		CLAMP_UP_CLOSE(DoubleSolenoid.Value.kForward, DoubleSolenoid.Value.kReverse);
+		CLAMP_UP_CLOSE(DoubleSolenoid.Value.kForward, DoubleSolenoid.Value.kReverse),
+		CLAMP_UP_OPEN(DoubleSolenoid.Value.kReverse, DoubleSolenoid.Value.kReverse);
 		
 		public DoubleSolenoid.Value clamp, rotate;
 		
