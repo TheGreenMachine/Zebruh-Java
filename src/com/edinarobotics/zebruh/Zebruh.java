@@ -5,6 +5,8 @@ import com.edinarobotics.utils.gamepad.GamepadNew;
 import com.edinarobotics.zebruh.commands.AutonomousCommand;
 import com.edinarobotics.zebruh.commands.CalibrateElevatorCommand;
 import com.edinarobotics.zebruh.commands.GamepadDriveCommand;
+import com.edinarobotics.zebruh.commands.SetClawCommand;
+import com.edinarobotics.zebruh.subsystems.Claw;
 //import com.edinarobotics.zebruh.subsystems.Claw;
 import com.edinarobotics.zebruh.subsystems.Drivetrain;
 import com.edinarobotics.zebruh.subsystems.Elevator;
@@ -54,6 +56,9 @@ public class Zebruh extends IterativeRobot {
 		
 		CalibrateElevatorCommand calibration = new CalibrateElevatorCommand();
 		calibration.start();
+		
+		SetClawCommand setClaw = new SetClawCommand(Claw.ClawState.CLAMP_UP_CLOSE);
+		setClaw.start();
 		
 	}
 
