@@ -64,8 +64,8 @@ public class Elevator extends Subsystem1816 {
 	public enum ElevatorLevel {
 		 BOTTOM(0),
 		 PICKUP(-500),
-		 ONE_TOTE(-2000),
-		 TWO_TOTES(-3000),
+		 ONE_TOTE(-2400),
+		 TWO_TOTES(-3850),
 		 THREE_TOTES(-4000),
 		 TOP(-7000),
 		 DEFAULT(0),
