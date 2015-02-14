@@ -13,6 +13,9 @@ public class Drivetrain extends Subsystem1816 {
 
 	private HRobotDrive hRobotDrive;
 	
+	private boolean lowGear;
+	
+	
 	private final int RAMP_RATE = 100;
 
 	public Drivetrain(int topLeft, int topRight, int bottomLeft,
@@ -31,6 +34,7 @@ public class Drivetrain extends Subsystem1816 {
 		this.bottomRight.setVoltageRampRate(RAMP_RATE);
 		hRobotDrive = new HRobotDrive(this.topLeft, this.bottomLeft,
 				this.topRight, this.bottomRight, middleBottom, middleTop);
+		lowGear = false;
 	}
 
 	public void setVerticalStrafe(double verticalStrafe) {
@@ -48,7 +52,16 @@ public class Drivetrain extends Subsystem1816 {
 		update();
 	}
 	
+	public void setLowGear(boolean lowGear) {
+		this.lowGear = lowGear;
+	}
+	
 	public void setDrivetrain(double verticalStrafe, double horizontalStrafe, double rotation) {
+		if(lowGear) {
+			verticalStrafe *= 0.6;
+			horizontalStrafe *= 0.6;
+			rotation *= 0.6;
+		}
 		this.verticalStrafe = verticalStrafe;
 		this.horizontalStrafe = horizontalStrafe;
 		this.rotation = rotation;
