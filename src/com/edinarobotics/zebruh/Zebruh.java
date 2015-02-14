@@ -20,6 +20,8 @@ public class Zebruh extends IterativeRobot {
 //	private Claw claw;
 	private Elevator elevator;
 	
+	private boolean wasAutonomous = false;
+	
 	private Command autonomousCommand;
 
 	public void robotInit() {
@@ -34,8 +36,7 @@ public class Zebruh extends IterativeRobot {
 	
 	@Override
 	public void autonomousInit() {
-		Drivetrain drivetrain = Components.getInstance().drivetrain;
-		drivetrain.setDefaultCommand(new MaintainStateCommand(drivetrain));
+		wasAutonomous = true;
 		
 		autonomousCommand = new AutonomousCommand(AutonomousCommand.AutoMode.BIN_TOTE);
 		
@@ -54,11 +55,13 @@ public class Zebruh extends IterativeRobot {
 		Components.getInstance().drivetrain
 				.setDefaultCommand(new GamepadDriveCommand(gamepad0));
 		
-		CalibrateElevatorCommand calibration = new CalibrateElevatorCommand();
-		calibration.start();
-		
-		SetClawCommand setClaw = new SetClawCommand(Claw.ClawState.CLAMP_UP_CLOSE);
-		setClaw.start();
+		if(!wasAutonomous) {
+			CalibrateElevatorCommand calibration = new CalibrateElevatorCommand();
+			calibration.start();
+			
+			SetClawCommand setClaw = new SetClawCommand(Claw.ClawState.CLAMP_UP_CLOSE);
+			setClaw.start();
+		}
 		
 	}
 
