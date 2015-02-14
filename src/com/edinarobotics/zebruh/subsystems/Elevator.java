@@ -57,16 +57,16 @@ public class Elevator extends Subsystem1816 {
 		override = false;
 		ElevatorLevel.setDefault(talonA.getEncPosition());
 		level = ElevatorLevel.DEFAULT;
-		downAuto = false;
+		downAuto = true;
 		didSetStop = false;
 	}
 	
 	public enum ElevatorLevel {
-		 BOTTOM(0),
+		 BOTTOM(-50),
 		 PICKUP(-500),
 		 ONE_TOTE(-2400),
 		 TWO_TOTES(-3850),
-		 THREE_TOTES(-4000),
+		 THREE_TOTES(-6400),
 		 TOP(-7000),
 		 DEFAULT(0),
 		 BIN_PICKUP_AUTO(-1500);
@@ -114,6 +114,7 @@ public class Elevator extends Subsystem1816 {
 	public boolean getLS4() {
 		return !ls4.get();
 	}
+	
 	
 	public void setElevatorState(ElevatorLevel state) {
 		setOverride(false);
@@ -203,30 +204,27 @@ public class Elevator extends Subsystem1816 {
 			setDidSetStop(false);
 			System.out.println("LimitSwitch4 not on");
 			if(override) {
-				System.out.println("Manual Mode!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
 				if (currentTicks <= CLAW_UP_MAXIMUM_HEIGHT && claw.getRotateState() == DoubleSolenoid.Value.kReverse && getLS3()){
 					setTalons(CLAW_UP_MAXIMUM_HEIGHT);
 				} else {
 					if(!getLS4()) {
 						setTalons(currentTicks);
-					} else if(downManual && currentTicks < lowestTick) {
+					} else if(downManual) {
 						setTalons(currentTicks);
-					} else if (getLS4()) {
+					} else if(getLS4()) {
 						setTalons(MAXIMUM_TICKS);
+					} else if(talonA.getEncPosition() > ElevatorLevel.BOTTOM.ticks) {
+						setTalons(ElevatorLevel.BOTTOM.ticks);
 					}
 				}
 			} else {
-				System.out.println("AUTOMATIC MODE!!!!!!!!!!!!!!!");
 				if(!downAuto) {
 					if(level == ElevatorLevel.TOP && claw.getRotateState() == DoubleSolenoid.Value.kReverse) {
-	//					System.out.println("Going up to max claw height!");
 						setTalons(ElevatorLevel.THREE_TOTES.ticks);
 					} else {
-	//					System.out.println("Going up!");
 						setTalons(level.ticks);
 					}
 				} else {
-	//				System.out.println("Going down!");
 					setTalons(currentTicks);
 				} 
 			}
