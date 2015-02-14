@@ -72,9 +72,6 @@ public class Controls {
 		gamepad1.rightBumper().whenPressed(new RunElevatorToLevelCommand(Elevator.ElevatorLevel.THREE_TOTES));
 		gamepad1.rightTrigger().whenPressed(new RunElevatorToLevelCommand(Elevator.ElevatorLevel.TOP));
 
-		gamepad1.dPadUp().whileHeld(new RunElevatorManualCommand(MANUAL_TICKS_UP, true));
-		gamepad1.dPadDown().whileHeld(new RunElevatorManualCommand(-MANUAL_TICKS_DOWN, false));
-
 	}
 
 	/**

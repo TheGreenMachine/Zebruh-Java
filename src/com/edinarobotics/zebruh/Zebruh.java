@@ -5,6 +5,7 @@ import com.edinarobotics.utils.gamepad.GamepadNew;
 import com.edinarobotics.zebruh.commands.AutonomousCommand;
 import com.edinarobotics.zebruh.commands.CalibrateElevatorCommand;
 import com.edinarobotics.zebruh.commands.GamepadDriveCommand;
+import com.edinarobotics.zebruh.commands.RunElevatorManualCommand;
 import com.edinarobotics.zebruh.commands.SetClawCommand;
 import com.edinarobotics.zebruh.subsystems.Claw;
 //import com.edinarobotics.zebruh.subsystems.Claw;
@@ -51,9 +52,11 @@ public class Zebruh extends IterativeRobot {
 	@Override
 	public void teleopInit() {
 		GamepadNew gamepad0 = Controls.getInstance().gamepad0;
+		GamepadNew gamepad1 = Controls.getInstance().gamepad1;
 
 		Components.getInstance().drivetrain
 				.setDefaultCommand(new GamepadDriveCommand(gamepad0));
+		Components.getInstance().elevator.setDefaultCommand(new RunElevatorManualCommand(gamepad1));
 		
 		if(!wasAutonomous) {
 			CalibrateElevatorCommand calibration = new CalibrateElevatorCommand();

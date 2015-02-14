@@ -5,6 +5,7 @@ import com.edinarobotics.utils.subsystems.Subsystem1816;
 import edu.wpi.first.wpilibj.CANTalon;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
+import edu.wpi.first.wpilibj.command.Command;
 
 public class Elevator extends Subsystem1816 {
 	
@@ -28,6 +29,8 @@ public class Elevator extends Subsystem1816 {
 	private int talonAChannel;
 	
 	public static final int CLAW_UP_MAXIMUM_HEIGHT = -6400;
+	private final int MANUAL_TICKS_UP = -500;
+	private final int MANUAL_TICKS_DOWN = 250;
 	
 	private double lowestTick;
 	
@@ -146,21 +149,25 @@ public class Elevator extends Subsystem1816 {
 		return talonA.getEncPosition() > level.ticks;
 	}
 	
-	public void setManualTicks(int ticks, boolean isUp){
+	public void setManualTicks(double value) {
 		setOverride(true);
+		boolean up;
 		
-		if((!getLS1() && !getLS4()) || ((getLS1() && isUp) || (getLS4() && !isUp))) {
-			if (ticks < 0){
+		up = value<0? false:true;
+		
+		
+		if((!getLS1() && !getLS4()) || ((getLS1() && up) || (getLS4() && !up))) {
+			if (up) {
 				downManual = false;
 				talonA.setPID(P_MANUAL_UP, I_MANUAL_UP, D_MANUAL_UP);
 			} else {
 				downManual = true;
 				talonA.setPID(P_AUTO_DOWN, I_AUTO_DOWN, D_AUTO_DOWN);
 			}
-			if(currentTicks > CLAW_UP_MAXIMUM_HEIGHT)
-				currentTicks = talonA.getEncPosition() + ticks;
-			else if(currentTicks < CLAW_UP_MAXIMUM_HEIGHT)
-				currentTicks = talonA.getEncPosition() + ticks;
+			if(currentTicks >= CLAW_UP_MAXIMUM_HEIGHT)
+				currentTicks = (int) (talonA.getEncPosition() + (value*MANUAL_TICKS_UP));
+			else if(currentTicks <= CLAW_UP_MAXIMUM_HEIGHT)
+				currentTicks = (int) (talonA.getEncPosition() + (value*MANUAL_TICKS_DOWN));
 			update();
 		}
 	}
@@ -229,9 +236,15 @@ public class Elevator extends Subsystem1816 {
 				} 
 			}
 		} else {
-			System.out.println("AJAJFASJFJAFJAFASDF");
 			setStopEverythingTicks();
 			setTalons(currentTicks);
 		}
 	}
+	
+	public void setDefaultCommand(Command command){
+        if(getDefaultCommand() != null){
+            super.getDefaultCommand().cancel();
+        }
+        super.setDefaultCommand(command);
+    }
 }
