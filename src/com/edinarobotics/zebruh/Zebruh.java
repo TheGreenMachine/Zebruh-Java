@@ -3,6 +3,7 @@ package com.edinarobotics.zebruh;
 import com.edinarobotics.utils.commands.MaintainStateCommand;
 import com.edinarobotics.utils.gamepad.GamepadNew;
 import com.edinarobotics.zebruh.commands.AutonomousCommand;
+import com.edinarobotics.zebruh.commands.AutonomousCommand.AutoMode;
 import com.edinarobotics.zebruh.commands.CalibrateElevatorCommand;
 import com.edinarobotics.zebruh.commands.GamepadDriveCommand;
 import com.edinarobotics.zebruh.commands.RunElevatorManualCommand;
@@ -15,6 +16,7 @@ import com.edinarobotics.zebruh.subsystems.Elevator;
 import edu.wpi.first.wpilibj.IterativeRobot;
 import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.command.Scheduler;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 
 public class Zebruh extends IterativeRobot {
 	private Drivetrain drivetrain;
@@ -22,6 +24,8 @@ public class Zebruh extends IterativeRobot {
 	private Elevator elevator;
 	
 	private boolean wasAutonomous = false;
+
+	private SendableChooser autoChooser;
 	
 	private Command autonomousCommand;
 
@@ -31,6 +35,9 @@ public class Zebruh extends IterativeRobot {
 		drivetrain = Components.getInstance().drivetrain;
 		elevator = Components.getInstance().elevator;
 		
+		autoChooser = new SendableChooser();
+		autoChooser.addDefault("BIN", new AutonomousCommand(AutoMode.BIN));
+		autoChooser.addObject("BIN AND TOTE", new AutonomousCommand(AutoMode.BIN_TOTE));
 		
 		//claw = Components.getInstance().claw;
 	}

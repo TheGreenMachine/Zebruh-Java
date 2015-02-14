@@ -38,7 +38,7 @@ public class Elevator extends Subsystem1816 {
 	private final int RAMP_RATE = 6;
 	
 	private Elevator.ElevatorLevel level;
-	private boolean override, downAuto, downManual, didSetStop;
+	private boolean override, downAuto, downManual, didSetStop, up;
 	private int currentTicks;
 	
 	
@@ -151,12 +151,19 @@ public class Elevator extends Subsystem1816 {
 	
 	public void setManualTicks(double value) {
 		setOverride(true);
-		boolean up;
 		
-		up = value<0? false:true;
+//		
+//		if(value != 0) {
+//			System.out.println("1");
+			up = value<0? false:true;
+//		}
+//		else {
+			System.out.println("2");
+//			setOverride(false);
+//		}
 		
 		
-		if((!getLS1() && !getLS4()) || ((getLS1() && up) || (getLS4() && !up))) {
+		if((value!=0) && (!getLS1() && !getLS4()) || ((getLS1() && up) || (getLS4() && !up))) {
 			if (up) {
 				downManual = false;
 				talonA.setPID(P_MANUAL_UP, I_MANUAL_UP, D_MANUAL_UP);
@@ -205,7 +212,7 @@ public class Elevator extends Subsystem1816 {
 	
 	@Override
 	public void update() {
-		System.out.println("Target: " + level.ticks + "      Current: " + getEncoderTicks());
+//		System.out.println("Target: " + level.ticks + "      Current: " + getEncoderTicks());
 //		System.out.println("Limit 1: " + getLS1() + " Limit 4: " + getLS4());
 		if(!getLS4()) {
 			setDidSetStop(false);
