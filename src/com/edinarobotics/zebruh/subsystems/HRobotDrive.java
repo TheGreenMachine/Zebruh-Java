@@ -23,5 +23,6 @@ public class HRobotDrive extends RobotDrive {
 		arcadeDrive(-verticalStrafe, rotation);
 		middleBottom.set(horizontalStrafe);
 		middleTop.set(-horizontalStrafe);
+		
 	}
 }
