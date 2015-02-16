@@ -25,11 +25,11 @@ public class RunElevatorToLevelCommand extends Command {
 	@Override
 	protected void initialize() {
 		//Remember, we are working with negative ticks. So everything is backwards.
-		elevator.setElevatorState(level);
-		if(elevator.getLevel().ticks < level.ticks)
-			autoDown = false;
-		else
+		if(elevator.getEncoderTicks() < level.ticks)
 			autoDown = true;
+		else
+			autoDown = false;
+		elevator.setElevatorState(level);
 	}
 
 	@Override
