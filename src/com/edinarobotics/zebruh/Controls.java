@@ -24,9 +24,6 @@ public class Controls {
 	public final GamepadNew gamepad0;
 	public final GamepadNew gamepad1;
 	
-	public static final int MANUAL_TICKS_UP = -500;
-	public static final int MANUAL_TICKS_DOWN = -250;
-	
  final double MANUAL_MOVEMENT = 0.5;
 
 	private Controls() {
@@ -62,11 +59,12 @@ public class Controls {
 		gamepad1.dPadRight().whenPressed(new SetClawCommand(ClawState.CLAMP_DOWN_CLOSE));
 		gamepad1.dPadLeft().whenPressed(new SetClawCommand(ClawState.CLAMP_DOWN_OPEN));
 		
-//		gamepad1.leftBumper().whenPressed(new SetSingleSolenoidStateCommand(true));
+		gamepad1.leftBumper().whenPressed(new SetSingleSolenoidStateCommand(true));
+		gamepad1.leftTrigger().whenPressed(new SetSingleSolenoidStateCommand(false));
 		
 
-		gamepad1.leftBumper().whileHeld(new RunElevatorManualCommand(MANUAL_TICKS_UP, true));
-		gamepad1.leftTrigger().whileHeld(new RunElevatorManualCommand(-MANUAL_TICKS_DOWN, false));
+//		gamepad1.leftBumper().whileHeld(new RunElevatorManualCommand(MANUAL_TICKS_UP, true));
+//		gamepad1.leftTrigger().whileHeld(new RunElevatorManualCommand(-MANUAL_TICKS_DOWN, false));
 
 	}
 
