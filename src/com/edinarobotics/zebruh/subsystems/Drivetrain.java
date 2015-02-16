@@ -15,6 +15,8 @@ public class Drivetrain extends Subsystem1816 {
 	
 	private boolean lowGear;
 	
+	private final double DOWN_SCALE_MAIN = 0.8;
+	private final double SLOW_SPEED_SCALE = 0.6;
 	
 	private final int RAMP_RATE = 100;
 
@@ -58,13 +60,13 @@ public class Drivetrain extends Subsystem1816 {
 	
 	public void setDrivetrain(double verticalStrafe, double horizontalStrafe, double rotation) {
 		if(lowGear) {
-			verticalStrafe *= 0.6;
-			horizontalStrafe *= 0.6;
-			rotation *= 0.6;
+			verticalStrafe *= SLOW_SPEED_SCALE;
+			horizontalStrafe *= SLOW_SPEED_SCALE;
+			rotation *= SLOW_SPEED_SCALE;
 		}
-		this.verticalStrafe = verticalStrafe;
-		this.horizontalStrafe = horizontalStrafe;
-		this.rotation = rotation;
+		this.verticalStrafe = verticalStrafe * DOWN_SCALE_MAIN;
+		this.horizontalStrafe = horizontalStrafe * DOWN_SCALE_MAIN;
+		this.rotation = rotation * DOWN_SCALE_MAIN;
 		update();
 	}
 	
