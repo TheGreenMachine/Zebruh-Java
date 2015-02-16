@@ -4,19 +4,25 @@ import com.edinarobotics.utils.subsystems.Subsystem1816;
 
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
+import edu.wpi.first.wpilibj.Solenoid;
 
 public class Claw extends Subsystem1816 {
 
 	private DoubleSolenoid clampSolenoid;
 	private DoubleSolenoid rotateSolenoid;
+	private Solenoid solenoid;
 	private ClawState targetState;
+	
+	private boolean solenoidState;
 	
 	private Elevator elevator;
 	
-	public Claw(int clampChannel1, int clampChannel2, int rotateChannel1, int rotateChannel2, int pcmNode) {
+	public Claw(int clampChannel1, int clampChannel2, int rotateChannel1, int rotateChannel2, int singleChannel, int pcmNode) {
 		clampSolenoid = new DoubleSolenoid(pcmNode, clampChannel1, clampChannel2);
 		rotateSolenoid = new DoubleSolenoid(pcmNode, rotateChannel1, rotateChannel2);
+		solenoid = new Solenoid(pcmNode, singleChannel);
 		targetState = ClawState.CLAMP_UP_OPEN;
+		solenoidState = false;
 	}
 	
 	public enum ClawState {
@@ -35,6 +41,11 @@ public class Claw extends Subsystem1816 {
 	
 	public void setElevator(Elevator elevator){
 		this.elevator = elevator;
+	}
+	
+	public void setSolenoid(boolean state) {
+		solenoidState = state;
+		update();
 	}
 	
 	public Elevator getElevator(){
@@ -62,6 +73,7 @@ public class Claw extends Subsystem1816 {
 	public void update() {
 		clampSolenoid.set(targetState.clamp);
 		rotateSolenoid.set(targetState.rotate);
+		solenoid.set(solenoidState);
 //		System.out.println("Clamp Solenoid: " + clampSolenoid.get().toString() + "    Rotate Solenoid: " + rotateSolenoid.get().toString());
 	}
 
