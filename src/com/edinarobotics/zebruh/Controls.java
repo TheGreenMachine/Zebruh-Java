@@ -16,6 +16,7 @@ import com.edinarobotics.zebruh.commands.SetClawCommand;
 import com.edinarobotics.zebruh.commands.SetDrivetrainCommand;
 import com.edinarobotics.zebruh.commands.SetLowGearCommand;
 import com.edinarobotics.zebruh.subsystems.Claw;
+import com.edinarobotics.zebruh.subsystems.Claw.ClawState;
 import com.edinarobotics.zebruh.subsystems.Elevator;
 
 public class Controls {
@@ -24,8 +25,8 @@ public class Controls {
 	public final GamepadNew gamepad0;
 	public final GamepadNew gamepad1;
 	
-	private final int MANUAL_TICKS_UP = -500;
-	private final int MANUAL_TICKS_DOWN = -250;
+	public static final int MANUAL_TICKS_UP = -500;
+	public static final int MANUAL_TICKS_DOWN = -250;
 	
  final double MANUAL_MOVEMENT = 0.5;
 
@@ -38,25 +39,9 @@ public class Controls {
 		gamepadFilters.add(new PowerFilter(1));
 		GamepadFilterSet driveGamepadFilterSet = new GamepadFilterSet(gamepadFilters);
 		gamepad0 = new FilteredGamepad(0, driveGamepadFilterSet);
-		
-		gamepad0.leftBumper().whenPressed(new SetClawCommand(Claw.ClawState.CLAMP_DOWN_OPEN));
-	    gamepad0.leftTrigger().whenPressed(new SetClawCommand(Claw.ClawState.CLAMP_DOWN_CLOSE));
-	    gamepad0.rightBumper().whenPressed(new SetClawCommand(Claw.ClawState.CLAMP_UP_CLOSE));
 	    gamepad0.rightTrigger().whenPressed(new SetLowGearCommand(true));
 	    gamepad0.rightTrigger().whenReleased(new SetLowGearCommand(false));
 	    
-	    gamepad0.dPadUp().whenPressed(new SetDrivetrainCommand(MANUAL_MOVEMENT, 0.0, 0.0));
-	    gamepad0.dPadUp().whenReleased(new SetDrivetrainCommand(0.0, 0.0, 0.0));
-	    gamepad0.dPadRight().whenPressed(new SetDrivetrainCommand(0.0, MANUAL_MOVEMENT, 0.0));
-	    gamepad0.dPadRight().whenReleased(new SetDrivetrainCommand(0.0, 0.0, 0.0));
-	    gamepad0.dPadDown().whenPressed(new SetDrivetrainCommand(-MANUAL_MOVEMENT, 0.0, 0.0));
-	    gamepad0.dPadDown().whenReleased(new SetDrivetrainCommand(0.0, 0.0, 0.0));
-	    gamepad0.dPadLeft().whenPressed(new SetDrivetrainCommand(0.0, -MANUAL_MOVEMENT, 0.0));
-	    gamepad0.dPadLeft().whenReleased(new SetDrivetrainCommand(0.0, 0.0, 0.0));
-	    gamepad0.diamondLeft().whenPressed(new SetDrivetrainCommand(0.0, 0.0, -MANUAL_MOVEMENT));
-	    gamepad0.diamondLeft().whenReleased(new SetDrivetrainCommand(0.0, 0.0, -0.0));
-	    gamepad0.diamondRight().whenPressed(new SetDrivetrainCommand(0.0, 0.0, MANUAL_MOVEMENT));
-	    gamepad0.diamondLeft().whenReleased(new SetDrivetrainCommand(0.0, 0.0, 0.0));
 	    
 		//Elevator control gamepad
 		List<GamepadFilter> filters = new ArrayList<GamepadFilter>();
@@ -71,6 +56,17 @@ public class Controls {
 		gamepad1.diamondLeft().whenPressed(new RunElevatorToLevelCommand(Elevator.ElevatorLevel.TWO_TOTES));
 		gamepad1.rightBumper().whenPressed(new RunElevatorToLevelCommand(Elevator.ElevatorLevel.THREE_TOTES));
 		gamepad1.rightTrigger().whenPressed(new RunElevatorToLevelCommand(Elevator.ElevatorLevel.TOP));
+		
+		
+		gamepad1.dPadUp().whenPressed(new SetClawCommand(ClawState.CLAMP_DOWN_OPEN));
+		gamepad1.dPadDown().whenPressed(new SetClawCommand(ClawState.CLAMP_UP_CLOSE));
+		gamepad1.dPadRight().whenPressed(new SetClawCommand(ClawState.CLAMP_DOWN_CLOSE));
+		gamepad1.dPadLeft().whenPressed(new SetClawCommand(ClawState.CLAMP_DOWN_OPEN));
+		
+		
+
+		gamepad1.leftBumper().whileHeld(new RunElevatorManualCommand(MANUAL_TICKS_UP, true));
+		gamepad1.leftTrigger().whileHeld(new RunElevatorManualCommand(-MANUAL_TICKS_DOWN, false));
 
 	}
 
