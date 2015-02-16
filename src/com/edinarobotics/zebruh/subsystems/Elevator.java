@@ -1,11 +1,11 @@
 package com.edinarobotics.zebruh.subsystems;
 
 import com.edinarobotics.utils.subsystems.Subsystem1816;
+import com.edinarobotics.zebruh.Controls;
 
 import edu.wpi.first.wpilibj.CANTalon;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
-import edu.wpi.first.wpilibj.command.Command;
 
 public class Elevator extends Subsystem1816 {
 	
@@ -28,9 +28,7 @@ public class Elevator extends Subsystem1816 {
 	
 	private int talonAChannel;
 	
-	public static final int CLAW_UP_MAXIMUM_HEIGHT = -6400;
-	private final int MANUAL_TICKS_UP = -500;
-	private final int MANUAL_TICKS_DOWN = 250;
+	public static final int CLAW_UP_MAXIMUM_HEIGHT = -6500;
 	
 	private double lowestTick;
 	
@@ -38,8 +36,13 @@ public class Elevator extends Subsystem1816 {
 	private final int RAMP_RATE = 6;
 	
 	private Elevator.ElevatorLevel level;
-	private boolean override, downAuto, downManual, didSetStop, up;
+	private boolean override, downAuto, downManual, didSetStop;
 	private int currentTicks;
+	
+	private boolean hasHitL3 = false;
+	private boolean hasHitL4 = false;
+	
+	private int stopEncoderPoint = 0;
 	
 	
 	public Elevator(int talonAChannel, int talonBChannel, int ls1Channel, int ls2Channel, 
@@ -58,30 +61,24 @@ public class Elevator extends Subsystem1816 {
 //		talonA.setVoltageRampRate(RAMP_RATE);
 //		talonB.setVoltageRampRate(RAMP_RATE);
 		override = false;
-		ElevatorLevel.setDefault(talonA.getEncPosition());
-		level = ElevatorLevel.DEFAULT;
+		level = ElevatorLevel.BOTTOM;
 		downAuto = true;
 		didSetStop = false;
 	}
 	
 	public enum ElevatorLevel {
-		 BOTTOM(-50),
+		 BOTTOM(0),
 		 PICKUP(-500),
 		 ONE_TOTE(-2400),
 		 TWO_TOTES(-3850),
 		 THREE_TOTES(-6400),
 		 TOP(-7000),
-		 DEFAULT(0),
 		 BIN_PICKUP_AUTO(-1500);
 		 
 		 public int ticks;
 		 
 		 ElevatorLevel(int ticks) {
 			 this.ticks = ticks;
-		 }
-		 
-		 public static void setDefault(int ticks) {
-			 DEFAULT.ticks = ticks;
 		 }
 		 
 		 public static void setBottom(int ticks) {
@@ -121,7 +118,7 @@ public class Elevator extends Subsystem1816 {
 	
 	public void setElevatorState(ElevatorLevel state) {
 		setOverride(false);
-		if(level.ticks < state.ticks) {
+		if(getEncoderTicks() < state.ticks) {
 			downAuto = true;
 			talonA.setPID(P_AUTO_DOWN, I_AUTO_DOWN, D_AUTO_DOWN);
 		} else {
@@ -149,32 +146,21 @@ public class Elevator extends Subsystem1816 {
 		return talonA.getEncPosition() > level.ticks;
 	}
 	
-	public void setManualTicks(double value) {
+	public void setManualTicks(int ticks, boolean isUp){
 		setOverride(true);
 		
-//		
-//		if(value != 0) {
-//			System.out.println("1");
-			up = value<0? false:true;
-//		}
-//		else {
-			System.out.println("2");
-//			setOverride(false);
-//		}
-		
-		
-		if((value!=0) && (!getLS1() && !getLS4()) || ((getLS1() && up) || (getLS4() && !up))) {
-			if (up) {
+		if((!getLS1() && !getLS4()) || ((getLS1() && isUp) || (getLS4() && !isUp))) {
+			if (ticks < 0){
 				downManual = false;
 				talonA.setPID(P_MANUAL_UP, I_MANUAL_UP, D_MANUAL_UP);
 			} else {
 				downManual = true;
 				talonA.setPID(P_AUTO_DOWN, I_AUTO_DOWN, D_AUTO_DOWN);
 			}
-			if(currentTicks >= CLAW_UP_MAXIMUM_HEIGHT)
-				currentTicks = (int) (talonA.getEncPosition() + (value*MANUAL_TICKS_UP));
-			else if(currentTicks <= CLAW_UP_MAXIMUM_HEIGHT)
-				currentTicks = (int) (talonA.getEncPosition() + (value*MANUAL_TICKS_DOWN));
+			if(currentTicks > CLAW_UP_MAXIMUM_HEIGHT)
+				currentTicks = talonA.getEncPosition() + ticks;
+			else if(currentTicks < CLAW_UP_MAXIMUM_HEIGHT)
+				currentTicks = talonA.getEncPosition() + ticks;
 			update();
 		}
 	}
@@ -198,28 +184,21 @@ public class Elevator extends Subsystem1816 {
 		talonB.set(talonAChannel);
 	}
 	
-	private void setStopEverythingTicks() {
-		if(!didSetStop) {
-			currentTicks = talonA.getEncPosition();
-			override = true;
-		}
-		didSetStop = true;
-	}
-	
-	private void setDidSetStop(boolean setStop) {
-		didSetStop = setStop;
-	}
-	
 	@Override
 	public void update() {
-//		System.out.println("Target: " + level.ticks + "      Current: " + getEncoderTicks());
+		System.out.println("Target: " + level.ticks + "      Current: " + getEncoderTicks());
 //		System.out.println("Limit 1: " + getLS1() + " Limit 4: " + getLS4());
-		if(!getLS4()) {
-			setDidSetStop(false);
 			System.out.println("LimitSwitch4 not on");
 			if(override) {
-				if (currentTicks <= CLAW_UP_MAXIMUM_HEIGHT && claw.getRotateState() == DoubleSolenoid.Value.kReverse && getLS3()){
-					setTalons(CLAW_UP_MAXIMUM_HEIGHT);
+				if(currentTicks <= CLAW_UP_MAXIMUM_HEIGHT && 
+						claw.getRotateState() == DoubleSolenoid.Value.kReverse && !downManual){
+					setTalons(CLAW_UP_MAXIMUM_HEIGHT);	
+				} else if(getLS3()&& !downManual && claw.getRotateState() == DoubleSolenoid.Value.kReverse) {
+					if(!hasHitL3) {
+						stopEncoderPoint = getEncoderTicks();
+						hasHitL3 = true;
+					}
+					setTalons(stopEncoderPoint);
 				} else {
 					if(!getLS4()) {
 						setTalons(currentTicks);
@@ -242,16 +221,5 @@ public class Elevator extends Subsystem1816 {
 					setTalons(currentTicks);
 				} 
 			}
-		} else {
-			setStopEverythingTicks();
-			setTalons(currentTicks);
-		}
 	}
-	
-	public void setDefaultCommand(Command command){
-        if(getDefaultCommand() != null){
-            super.getDefaultCommand().cancel();
-        }
-        super.setDefaultCommand(command);
-    }
 }
