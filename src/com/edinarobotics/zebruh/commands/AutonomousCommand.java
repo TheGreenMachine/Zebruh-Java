@@ -27,7 +27,7 @@ public class AutonomousCommand extends CommandGroup {
 				addSequential(new SetClawCommand(Claw.ClawState.CLAMP_DOWN_CLOSE));
 				addSequential(new WaitCommand(1.0));
 				
-				addSequential(new RunElevatorToLevelCommand(Elevator.ElevatorLevel.THREE_TOTES));
+				addSequential(new RunElevatorToLevelCommand(Elevator.ElevatorLevel.TWO_TOTES));
 				addSequential(new WaitCommand(1.0));
 				
 				addSequential(new DriveXTimeHorizontalCommand(3.0, 0.3));
@@ -54,7 +54,7 @@ public class AutonomousCommand extends CommandGroup {
 				addSequential(new SetClawCommand(Claw.ClawState.CLAMP_DOWN_CLOSE));
 				addSequential(new WaitCommand(1.0));
 				
-				addSequential(new RunElevatorToLevelCommand(Elevator.ElevatorLevel.THREE_TOTES));
+				addSequential(new RunElevatorToLevelCommand(Elevator.ElevatorLevel.TWO_TOTES));
 				addSequential(new WaitCommand(1.0));
 				
 				addSequential(new DriveXTimeVerticalCommand(4.0, 0.65));
