@@ -13,8 +13,6 @@ public class Claw extends Subsystem1816 {
 	private Solenoid solenoid;
 	private ClawState targetState;
 	
-	private boolean solenoidState;
-	
 	private Elevator elevator;
 	
 	public Claw(int clampChannel1, int clampChannel2, int rotateChannel1, int rotateChannel2, int singleChannel, int pcmNode) {
@@ -22,30 +20,27 @@ public class Claw extends Subsystem1816 {
 		rotateSolenoid = new DoubleSolenoid(pcmNode, rotateChannel1, rotateChannel2);
 		solenoid = new Solenoid(pcmNode, singleChannel);
 		targetState = ClawState.CLAMP_UP_OPEN;
-		solenoidState = false;
 	}
 	
 	public enum ClawState {
-		CLAMP_DOWN_OPEN(DoubleSolenoid.Value.kReverse, DoubleSolenoid.Value.kForward),
-		CLAMP_DOWN_CLOSE(DoubleSolenoid.Value.kForward, DoubleSolenoid.Value.kForward),
-		CLAMP_UP_CLOSE(DoubleSolenoid.Value.kForward, DoubleSolenoid.Value.kReverse),
-		CLAMP_UP_OPEN(DoubleSolenoid.Value.kReverse, DoubleSolenoid.Value.kReverse);
+		CLAMP_DOWN_OPEN(DoubleSolenoid.Value.kReverse, DoubleSolenoid.Value.kForward, true),
+		CLAMP_DOWN_CLOSE(DoubleSolenoid.Value.kForward, DoubleSolenoid.Value.kForward, true),
+		CLAMP_UP_FAR_CLOSE(DoubleSolenoid.Value.kForward, DoubleSolenoid.Value.kReverse, true),
+		CLAMP_UP_MIDDLE_CLOSE(DoubleSolenoid.Value.kForward, DoubleSolenoid.Value.kReverse, false),
+		CLAMP_UP_OPEN(DoubleSolenoid.Value.kReverse, DoubleSolenoid.Value.kReverse, true);
 		
 		public DoubleSolenoid.Value clamp, rotate;
+		public boolean solenoidState;
 		
-		private ClawState(DoubleSolenoid.Value clamp, DoubleSolenoid.Value rotate){
+		private ClawState(DoubleSolenoid.Value clamp, DoubleSolenoid.Value rotate, boolean solenoidState){
 			this.clamp = clamp;
 			this.rotate = rotate;
+			this.solenoidState = solenoidState;
 		}
 	}
 	
 	public void setElevator(Elevator elevator){
 		this.elevator = elevator;
-	}
-	
-	public void setSolenoid(boolean state) {
-		solenoidState = state;
-		update();
 	}
 	
 	public Elevator getElevator(){
@@ -73,7 +68,7 @@ public class Claw extends Subsystem1816 {
 	public void update() {
 		clampSolenoid.set(targetState.clamp);
 		rotateSolenoid.set(targetState.rotate);
-		solenoid.set(solenoidState);
+		solenoid.set(targetState.solenoidState);
 //		System.out.println("Clamp Solenoid: " + clampSolenoid.get().toString() + "    Rotate Solenoid: " + rotateSolenoid.get().toString());
 	}
 

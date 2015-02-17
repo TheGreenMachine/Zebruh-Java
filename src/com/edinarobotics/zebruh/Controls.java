@@ -14,7 +14,6 @@ import com.edinarobotics.zebruh.commands.RunElevatorManualCommand;
 import com.edinarobotics.zebruh.commands.RunElevatorToLevelCommand;
 import com.edinarobotics.zebruh.commands.SetClawCommand;
 import com.edinarobotics.zebruh.commands.SetLowGearCommand;
-import com.edinarobotics.zebruh.commands.SetSingleSolenoidStateCommand;
 import com.edinarobotics.zebruh.subsystems.Claw.ClawState;
 import com.edinarobotics.zebruh.subsystems.Elevator;
 
@@ -55,12 +54,11 @@ public class Controls {
 		
 		
 		gamepad1.dPadUp().whenPressed(new SetClawCommand(ClawState.CLAMP_DOWN_OPEN));
-		gamepad1.dPadDown().whenPressed(new SetClawCommand(ClawState.CLAMP_UP_CLOSE));
+		gamepad1.dPadDown().whenPressed(new SetClawCommand(ClawState.CLAMP_UP_MIDDLE_CLOSE));
 		gamepad1.dPadRight().whenPressed(new SetClawCommand(ClawState.CLAMP_DOWN_CLOSE));
 		gamepad1.dPadLeft().whenPressed(new SetClawCommand(ClawState.CLAMP_DOWN_OPEN));
 		
-		gamepad1.leftBumper().whenPressed(new SetSingleSolenoidStateCommand(true));
-		gamepad1.leftTrigger().whenPressed(new SetSingleSolenoidStateCommand(false));
+		gamepad1.leftBumper().whenPressed(new SetClawCommand(ClawState.CLAMP_UP_FAR_CLOSE));
 		
 
 //		gamepad1.leftBumper().whileHeld(new RunElevatorManualCommand(MANUAL_TICKS_UP, true));

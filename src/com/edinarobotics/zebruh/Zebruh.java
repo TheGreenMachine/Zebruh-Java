@@ -76,7 +76,7 @@ public class Zebruh extends IterativeRobot {
 				.setDefaultCommand(new GamepadDriveCommand(gamepad0));
 		Components.getInstance().elevator.setDefaultCommand(new RunElevatorManualCommand(gamepad1));
 		
-		if(lastAutoMode == AutoMode.BIN_TOTE) {
+		if(lastAutoMode == AutoMode.BIN_TOTE && wasAutonomous) {
 			SetClawCommand setClaw = new SetClawCommand(ClawState.CLAMP_DOWN_OPEN);
 			setClaw.start();
 		}
@@ -85,7 +85,7 @@ public class Zebruh extends IterativeRobot {
 			CalibrateElevatorCommand calibration = new CalibrateElevatorCommand();
 			calibration.start();
 			
-			SetClawCommand setClaw1 = new SetClawCommand(Claw.ClawState.CLAMP_UP_CLOSE);
+			SetClawCommand setClaw1 = new SetClawCommand(Claw.ClawState.CLAMP_UP_MIDDLE_CLOSE);
 			setClaw1.start();
 		}
 		
