@@ -5,7 +5,6 @@ import com.edinarobotics.zebruh.subsystems.Claw;
 import edu.wpi.first.wpilibj.command.Command;
 
 public class SetClawCommand extends Command{
-
 	private Claw claw;
 	private Claw.ClawState state;
 	
