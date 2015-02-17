@@ -47,11 +47,9 @@ public class Claw extends Subsystem1816 {
 	}
 	
 	public void setClawState(ClawState state) {
-		
 		if(!(elevator.getEncoderTicks() <= Elevator.CLAW_UP_MAXIMUM_HEIGHT && getRotateState() == Value.kForward && state.rotate == Value.kReverse)) {
 			targetState = state;
 		}
-		
 		update();
 	}
 	
