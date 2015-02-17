@@ -8,7 +8,10 @@ import edu.wpi.first.wpilibj.command.WaitCommand;
 
 public class AutonomousCommand extends CommandGroup {
 	
+	private AutoMode mode;
+	
 	public AutonomousCommand(AutonomousCommand.AutoMode autoMode) {
+		mode = autoMode;
 		switch(autoMode) {
 			case BIN_TOTE:
 				addSequential(new CalibrateElevatorCommand());
@@ -74,6 +77,10 @@ public class AutonomousCommand extends CommandGroup {
 				break;
 		}		
 	}		
+	
+	public AutoMode getAutoMode() {
+		return mode;
+	}
 	
 	public enum AutoMode {
 		BIN_TOTE,
