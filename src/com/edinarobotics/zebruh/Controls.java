@@ -27,7 +27,6 @@ public class Controls {
 
 	private Controls() {
 		// Drivetrain control
-		//hi eric
 
 		List<GamepadFilter> gamepadFilters = new ArrayList<GamepadFilter>();
 		gamepadFilters.add(new DeadzoneFilter(0.1));
