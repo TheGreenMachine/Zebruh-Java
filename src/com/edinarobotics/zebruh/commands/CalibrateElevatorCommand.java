@@ -4,7 +4,9 @@ import com.edinarobotics.zebruh.Components;
 import com.edinarobotics.zebruh.subsystems.Elevator;
 import com.edinarobotics.zebruh.subsystems.Elevator.ElevatorLevel;
 
+import edu.wpi.first.wpilibj.CANTalon.ControlMode;
 import edu.wpi.first.wpilibj.command.Command;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class CalibrateElevatorCommand extends Command {
 	private Elevator elevator;
@@ -19,7 +21,9 @@ public class CalibrateElevatorCommand extends Command {
 	
 	@Override
 	protected void initialize() {
-	
+		elevator.getTalonA().changeControlMode(ControlMode.PercentVbus);
+		elevator.getTalonA().set(0.25);
+		SmartDashboard.putString("Elevator Calibration", "Not Calibrated!!!!");
 	}
 
 	@Override
@@ -32,19 +36,17 @@ public class CalibrateElevatorCommand extends Command {
 	protected boolean isFinished() {
 		if(elevator.getLS1()) {
 			level = ElevatorLevel.BOTTOM;
+			elevator.getTalonA().set(0.0);
+			elevator.getTalonA().changeControlMode(ControlMode.Position);
 			return true;
-		} else if (elevator.getLS4()) {
-			level = ElevatorLevel.TOP;
-			return true;
-		}
+		} 
 		return false;
 	}
 
 	@Override
 	protected void end() {
-		elevator.setPosition(level.ticks+200);
-		elevator.setElevatorState(level);
-		System.out.println("calibrated" + level.ticks);
+		elevator.setPosition(0);
+		SmartDashboard.putString("Elevator Calibration", "Calibrated!!!!");
 	}
 
 	@Override

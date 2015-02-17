@@ -16,6 +16,7 @@ public class RunElevatorToLevelCommand extends Command {
 	public RunElevatorToLevelCommand(ElevatorLevel level) {
 		super("RunElevatorToLevel");
 		elevator = Components.getInstance().elevator;
+		setInterruptible(true);
 		this.level = level;
 		autoDown = false;
 		requires(elevator);

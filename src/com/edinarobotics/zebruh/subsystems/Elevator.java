@@ -1,6 +1,8 @@
 package com.edinarobotics.zebruh.subsystems;
 
 import com.edinarobotics.utils.subsystems.Subsystem1816;
+
+import edu.wpi.first.wpilibj.CANJaguar.ControlMode;
 import edu.wpi.first.wpilibj.CANTalon;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
@@ -17,7 +19,7 @@ public class Elevator extends Subsystem1816 {
 	private final double I_AUTO_UP = 0.00001;
 	private final double D_AUTO_UP = 0.0;
 
-	private final double P_AUTO_DOWN = 0.2;
+	private final double P_AUTO_DOWN = 0.6;
 	private final double I_AUTO_DOWN = 0.0000;
 	private final double D_AUTO_DOWN = 00.0;
 
@@ -27,7 +29,7 @@ public class Elevator extends Subsystem1816 {
 
 	private int talonAChannel;
 
-	public static final int CLAW_UP_MAXIMUM_HEIGHT = -6700;
+	public static final int CLAW_UP_MAXIMUM_HEIGHT = -7000;
 
 	private final int MAXIMUM_TICKS = -7400;
 	private final int MANUAL_TICKS_UP = -700;
@@ -87,6 +89,14 @@ public class Elevator extends Subsystem1816 {
 
 	public int getEncoderTicks() {
 		return talonA.getEncPosition();
+	}
+	
+	public String getCurrentLevel() {
+		return level.toString();
+	}
+	
+	public CANTalon getTalonA() {
+		return talonA;
 	}
 
 	public boolean getLS1() {
@@ -154,19 +164,19 @@ public class Elevator extends Subsystem1816 {
 			if(claw.getRotateState() == Value.kReverse && currentTicks > CLAW_UP_MAXIMUM_HEIGHT) {
 				currentTicks = (int) (talonA.getEncPosition() + (value * multiplier));
 				if(currentTicks > CLAW_UP_MAXIMUM_HEIGHT)
-					currentTicks = CLAW_UP_MAXIMUM_HEIGHT;
+					currentTicks = CLAW_UP_MAXIMUM_HEIGHT-200;
 			}
 			 
 			if(claw.getRotateState() == Value.kForward && currentTicks > MAXIMUM_TICKS) {
 				currentTicks = (int) (talonA.getEncPosition() + (value * multiplier));
 				if(currentTicks > MAXIMUM_TICKS)
-					currentTicks = MAXIMUM_TICKS;
+					currentTicks = MAXIMUM_TICKS-100;
 			}
 			
 			if(currentTicks < ElevatorLevel.BOTTOM.ticks) {
 				currentTicks = (int) (talonA.getEncPosition() + (value * multiplier));
 				if(currentTicks > ElevatorLevel.BOTTOM.ticks)
-					currentTicks = ElevatorLevel.BOTTOM.ticks;
+					currentTicks = ElevatorLevel.BOTTOM.ticks-100;
 			}
 			update();
 		}
@@ -176,7 +186,7 @@ public class Elevator extends Subsystem1816 {
 		setOverride(false);
 		currentTicks = talonA.getEncPosition() + ticks;
 		if(currentTicks > level.ticks)
-			currentTicks = level.ticks;
+			currentTicks = level.ticks + 100;
 		update();
 	}
 
