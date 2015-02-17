@@ -10,35 +10,42 @@ import com.edinarobotics.zebruh.commands.SetClawCommand;
 import com.edinarobotics.zebruh.subsystems.Claw;
 import com.edinarobotics.zebruh.subsystems.Claw.ClawState;
 import com.edinarobotics.zebruh.subsystems.Drivetrain;
+import com.edinarobotics.zebruh.subsystems.Elevator;
 
 import edu.wpi.first.wpilibj.IterativeRobot;
 import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.command.Scheduler;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class Zebruh extends IterativeRobot {
 	private AutoMode lastAutoMode;
 	private Drivetrain drivetrain;
-//	private SmartDashboard smartDashboard;
+	private SendableChooser autoChooser;
+	private Elevator elevator;
 	private boolean wasAutonomous = false;
-	private Command autonomousCommand;
+	private AutonomousCommand autonomousCommand;
 
 	public void robotInit() {
 		Controls.getInstance();
 		Components.getInstance();
 		drivetrain = Components.getInstance().drivetrain;
+		elevator = Components.getInstance().elevator;
 		
-//		autoChooser.addDefault("BIN AND TOTE", new AutonomousCommand(AutoMode.BIN_TOTE));
-//		autoChooser.addObject("BIN", new AutonomousCommand(AutoMode.BIN));
-//		SmartDashboard.putData("Autonomous Chooser", autoChooser);
+		autoChooser = new SendableChooser();
+		
+		autoChooser.addDefault("BIN AND TOTE", new AutonomousCommand(AutoMode.BIN_TOTE));
+		autoChooser.addObject("BIN", new AutonomousCommand(AutoMode.BIN));
+		autoChooser.addObject("TOTE", new AutonomousCommand(AutoMode.TOTE));
+		SmartDashboard.putData("Autonomous Chooser", autoChooser);
 	}
 	
 	@Override
 	public void autonomousInit() {
 		wasAutonomous = true;
 		
-		autonomousCommand = new AutonomousCommand(AutoMode.BIN_TOTE);
-		lastAutoMode = AutoMode.BIN_TOTE;
+		autonomousCommand = (AutonomousCommand) autoChooser.getSelected();
+		lastAutoMode = autonomousCommand.getAutoMode();
 		
 		autonomousCommand.start();
 	}
@@ -77,7 +84,9 @@ public class Zebruh extends IterativeRobot {
 	}
 	
 	private void updateDashboard() {
-		SmartDashboard.putNumber("Current Level", 0);
+		SmartDashboard.putString("Current Level", elevator.getCurrentLevel());
+		SmartDashboard.putNumber("Current Encoder Ticks", elevator.getEncoderTicks());
+		SmartDashboard.putNumber("Target Encoder Ticks", elevator.getLevel().ticks);
 	}
 
 	@Override
