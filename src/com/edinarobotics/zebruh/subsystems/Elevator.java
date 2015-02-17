@@ -175,6 +175,8 @@ public class Elevator extends Subsystem1816 {
 	public void setElevatorDown(int ticks) {
 		setOverride(false);
 		currentTicks = talonA.getEncPosition() + ticks;
+		if(currentTicks > level.ticks)
+			currentTicks = level.ticks;
 		update();
 	}
 
