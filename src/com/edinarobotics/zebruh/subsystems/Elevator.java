@@ -20,21 +20,21 @@ public class Elevator extends Subsystem1816 {
 	private final double I_AUTO_UP = 0.00001;
 	private final double D_AUTO_UP = 0.0;
 
-	private final double P_AUTO_DOWN = 1.6;
-	private final double I_AUTO_DOWN = 0.00001;
-	private final double D_AUTO_DOWN = 100.0;
+	private final double P_AUTO_DOWN = 0.2;
+	private final double I_AUTO_DOWN = 0.0000;
+	private final double D_AUTO_DOWN = 00.0;
 
-	private final double P_MANUAL_UP = 1.0;
-	private final double D_MANUAL_UP = 0.0;
+	private final double P_MANUAL_UP = 1.6;
+	private final double D_MANUAL_UP = 0.00001;
 	private final double I_MANUAL_UP = 0.0;
 
 	private int talonAChannel;
 
-	public static final int CLAW_UP_MAXIMUM_HEIGHT = -6500;
+	public static final int CLAW_UP_MAXIMUM_HEIGHT = -6700;
 
 	private final int MAXIMUM_TICKS = -7400;
 	private final int MANUAL_TICKS_UP = -700;
-	private final int MANUAL_TICKS_DOWN = -200;
+	private final int MANUAL_TICKS_DOWN = -400;
 	
 	private Elevator.ElevatorLevel level;
 	private boolean override, downAuto, downManual;

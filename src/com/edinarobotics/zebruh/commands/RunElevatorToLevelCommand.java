@@ -12,7 +12,7 @@ public class RunElevatorToLevelCommand extends Command {
 	private ElevatorLevel level;
 	private boolean autoDown;
 	
-	private final int DOWN_AUTO_TICKS = 200;
+	private final int DOWN_AUTO_TICKS = 500;
 	
 	public RunElevatorToLevelCommand(ElevatorLevel level) {
 		super("RunElevatorToLevel");
