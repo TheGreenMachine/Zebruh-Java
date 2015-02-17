@@ -7,7 +7,6 @@ import com.edinarobotics.zebruh.subsystems.Elevator.ElevatorLevel;
 import edu.wpi.first.wpilibj.command.Command;
 
 public class RunElevatorToLevelCommand extends Command {
-	
 	private Elevator elevator;
 	private ElevatorLevel level;
 	private boolean autoDown;
@@ -51,11 +50,11 @@ public class RunElevatorToLevelCommand extends Command {
 
 	@Override
 	protected void end() {
+		
 	}
 
 	@Override
 	protected void interrupted() {
-		// TODO Auto-generated method stub
 		
 	}
 

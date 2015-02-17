@@ -34,4 +34,5 @@ public class VerticalStrafe extends Subsystem1816 {
         }
         super.setDefaultCommand(command);
     }
+	
 }

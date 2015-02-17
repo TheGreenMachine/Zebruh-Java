@@ -42,4 +42,5 @@ public class GamepadVerticalStrafeCommand extends Command {
 	protected void interrupted() {
 
 	}
+	
 }

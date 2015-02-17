@@ -7,24 +7,20 @@ import com.edinarobotics.zebruh.subsystems.Elevator;
 import edu.wpi.first.wpilibj.command.Command;
 
 public class RunElevatorManualCommand extends Command {
-
 	private Elevator elevator;
-	private int ticks;
 	private boolean isUp, manual;
 	private GamepadNew gamepad1;
 	
 	public RunElevatorManualCommand(GamepadNew gamepad1) {
 		super("RunElevatorManual");
 		elevator = Components.getInstance().elevator;
-		this.ticks = ticks;
-		this.isUp = isUp;
 		this.gamepad1 = gamepad1;
 		requires(elevator);
 	}
 
 	@Override
 	protected void initialize() {
-//		elevator.setManualTicks(ticks, isUp);
+		
 	}
 
 	@Override
@@ -58,7 +54,6 @@ public class RunElevatorManualCommand extends Command {
 
 	@Override
 	protected void interrupted() {
-		// TODO Auto-generated method stub
 		
 	}
 

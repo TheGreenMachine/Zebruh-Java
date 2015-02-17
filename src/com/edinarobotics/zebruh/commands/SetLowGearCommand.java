@@ -7,9 +7,7 @@ import edu.wpi.first.wpilibj.command.Command;
 
 public class SetLowGearCommand extends Command {
 	private Drivetrain drivetrain;
-	
 	private boolean lowGear;
-	
 	
 	public SetLowGearCommand(boolean lowGear) {
 		super("setlowgear");

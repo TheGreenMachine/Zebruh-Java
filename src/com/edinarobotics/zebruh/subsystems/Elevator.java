@@ -1,8 +1,6 @@
 package com.edinarobotics.zebruh.subsystems;
 
 import com.edinarobotics.utils.subsystems.Subsystem1816;
-import com.edinarobotics.zebruh.Controls;
-
 import edu.wpi.first.wpilibj.CANTalon;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
@@ -10,7 +8,6 @@ import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 import edu.wpi.first.wpilibj.command.Command;
 
 public class Elevator extends Subsystem1816 {
-
 	private CANTalon talonA, talonB;
 	private DigitalInput ls1, ls2, ls3, ls4;
 
@@ -41,7 +38,6 @@ public class Elevator extends Subsystem1816 {
 	private int currentTicks;
 
 	private boolean hasHitL3 = false;
-	private boolean hasHitL4 = false;
 
 	private int stopEncoderPoint = 0;
 
@@ -58,17 +54,20 @@ public class Elevator extends Subsystem1816 {
 		talonA.setFeedbackDevice(CANTalon.FeedbackDevice.QuadEncoder);
 		talonA.setPID(P_AUTO_UP, I_AUTO_UP, D_AUTO_UP);
 		talonB.changeControlMode(CANTalon.ControlMode.Follower);
-		// talonA.setVoltageRampRate(RAMP_RATE);
-		// talonB.setVoltageRampRate(RAMP_RATE);
 		override = false;
 		level = ElevatorLevel.BOTTOM;
 		downAuto = true;
 	}
 
 	public enum ElevatorLevel {
-		BOTTOM(0), PICKUP(-500), ONE_TOTE(-2400), TWO_TOTES(-3850), THREE_TOTES(
-				-6400), TOP(-7000), BIN_PICKUP_AUTO(-1500);
-
+		BOTTOM(0), 
+		PICKUP(-500), 
+		ONE_TOTE(-2400), 
+		TWO_TOTES(-3850), 
+		THREE_TOTES(-6400), 
+		TOP(-7000), 
+		BIN_PICKUP_AUTO(-1500);
+		
 		public int ticks;
 
 		ElevatorLevel(int ticks) {
@@ -136,7 +135,6 @@ public class Elevator extends Subsystem1816 {
 		// backwards.
 		return talonA.getEncPosition() > level.ticks;
 	}
-
 	
 	public void setManualTicks(double value, boolean isUp) {
 		int multiplier;
@@ -170,7 +168,6 @@ public class Elevator extends Subsystem1816 {
 				if(currentTicks > ElevatorLevel.BOTTOM.ticks)
 					currentTicks = ElevatorLevel.BOTTOM.ticks;
 			}
-				
 			update();
 		}
 	}
@@ -196,10 +193,6 @@ public class Elevator extends Subsystem1816 {
 
 	@Override
 	public void update() {
-		System.out.println("Target: " + level.ticks + "      Current: "
-				+ getEncoderTicks());
-		// System.out.println("Limit 1: " + getLS1() + " Limit 4: " + getLS4());
-		System.out.println("LimitSwitch4 not on");
 		if (override) {
 			if (currentTicks <= CLAW_UP_MAXIMUM_HEIGHT
 					&& claw.getRotateState() == DoubleSolenoid.Value.kReverse
@@ -243,4 +236,5 @@ public class Elevator extends Subsystem1816 {
 		}
 		super.setDefaultCommand(command);
 	}
+	
 }

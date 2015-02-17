@@ -10,45 +10,27 @@ import com.edinarobotics.zebruh.commands.SetClawCommand;
 import com.edinarobotics.zebruh.subsystems.Claw;
 import com.edinarobotics.zebruh.subsystems.Claw.ClawState;
 import com.edinarobotics.zebruh.subsystems.Drivetrain;
-import com.edinarobotics.zebruh.subsystems.Elevator;
 
 import edu.wpi.first.wpilibj.IterativeRobot;
 import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.command.Scheduler;
-import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
-
-
 public class Zebruh extends IterativeRobot {
-	private Drivetrain drivetrain;
-//	private Claw claw;
-	private Elevator elevator;
-	
-	private SendableChooser autoChooser;
 	private AutoMode lastAutoMode;
-	
-	private SmartDashboard smartDashboard;
-	
-//	private int camera;
-	
+	private Drivetrain drivetrain;
+//	private SmartDashboard smartDashboard;
 	private boolean wasAutonomous = false;
-	
 	private Command autonomousCommand;
 
 	public void robotInit() {
 		Controls.getInstance();
 		Components.getInstance();
 		drivetrain = Components.getInstance().drivetrain;
-		elevator = Components.getInstance().elevator;
-		autoChooser = new SendableChooser();
-//		camera = NIVision.IMAQdxOpenCamera("Camera", NIVision.IMAQdxCameraControlMode.CameraControlModeController);
 		
 //		autoChooser.addDefault("BIN AND TOTE", new AutonomousCommand(AutoMode.BIN_TOTE));
 //		autoChooser.addObject("BIN", new AutonomousCommand(AutoMode.BIN));
 //		SmartDashboard.putData("Autonomous Chooser", autoChooser);
-		
-		//claw = Components.getInstance().claw;
 	}
 	
 	@Override
@@ -57,7 +39,6 @@ public class Zebruh extends IterativeRobot {
 		
 		autonomousCommand = new AutonomousCommand(AutoMode.BIN_TOTE);
 		lastAutoMode = AutoMode.BIN_TOTE;
-		
 		
 		autonomousCommand.start();
 	}
@@ -88,20 +69,11 @@ public class Zebruh extends IterativeRobot {
 			SetClawCommand setClaw1 = new SetClawCommand(Claw.ClawState.CLAMP_UP_MIDDLE_CLOSE);
 			setClaw1.start();
 		}
-		
 	}
 
 	public void teleopPeriodic() {
 		Scheduler.getInstance().run();
 		updateDashboard();
-		
-		
-		//elevator.printInformation();
-		/*double p = SmartDashboard.getNumber("DB/Slider 0");
-		double i = SmartDashboard.getNumber("DB/Slider 1");
-		double d = SmartDashboard.getNumber("DB/Slider 2");
-		Components.getInstance().elevator.setPID(p, i, d);
-		System.out.println("P: " + p + "  |   I: " + i + "  |    D: " + d);*/
 	}
 	
 	private void updateDashboard() {
@@ -118,8 +90,8 @@ public class Zebruh extends IterativeRobot {
 	}
 
 	public void stop() {
-		// drivetrain.setHorizontalStrafe(0.0);
-		// drivetrain.setRotation(0.0);
-		// drivetrain.setVerticalStrafe(0.0);
+		 drivetrain.setHorizontalStrafe(0.0);
+		 drivetrain.setRotation(0.0);
+		 drivetrain.setVerticalStrafe(0.0);
 	}
 }

@@ -1,6 +1,5 @@
 package com.edinarobotics.zebruh.subsystems;
 
-
 import com.edinarobotics.utils.subsystems.Subsystem1816;
 
 import edu.wpi.first.wpilibj.CANTalon;
@@ -80,7 +79,5 @@ public class Drivetrain extends Subsystem1816 {
 	@Override
 	public void update() {
 		hRobotDrive.hDrive(verticalStrafe, horizontalStrafe, rotation);
-//		System.out.println("TopLeft: " + topLeft.get() + "      TopRight: " + topRight.get() + 
-//				"     BottomRight: " + bottomRight.get() + "      BottomLeft: " + bottomLeft.get());
 	}
 }

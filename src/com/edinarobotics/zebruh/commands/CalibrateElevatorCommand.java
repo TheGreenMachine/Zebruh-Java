@@ -7,7 +7,6 @@ import com.edinarobotics.zebruh.subsystems.Elevator.ElevatorLevel;
 import edu.wpi.first.wpilibj.command.Command;
 
 public class CalibrateElevatorCommand extends Command {
-
 	private Elevator elevator;
 	private ElevatorLevel level;
 	
@@ -15,30 +14,25 @@ public class CalibrateElevatorCommand extends Command {
 		super("CallibrateElevator");
 		elevator = Components.getInstance().elevator;
 		setInterruptible(false);
-//		setTimeout(0.5);
 		requires(elevator);
 	}
 	
 	@Override
 	protected void initialize() {
-//		elevator.setElevatorSpeed(-0.25);
+	
 	}
 
 	@Override
 	protected void execute() {
+		
 	}
+	
 
 	@Override
 	protected boolean isFinished() {
 		if(elevator.getLS1()) {
 			level = ElevatorLevel.BOTTOM;
 			return true;
-//		} else if(elevator.getLS2()) {
-//			level = ElevatorLevel.PICKUP;
-//			return true;
-//		} else if(elevator.getLS3()) {
-//			level = ElevatorLevel.ONE_TOTE;
-//			return true;
 		} else if (elevator.getLS4()) {
 			level = ElevatorLevel.TOP;
 			return true;
@@ -55,8 +49,6 @@ public class CalibrateElevatorCommand extends Command {
 
 	@Override
 	protected void interrupted() {
-		
-		// TODO Auto-generated method stub
 		
 	}
 

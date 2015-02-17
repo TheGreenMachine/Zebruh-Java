@@ -3,9 +3,6 @@ package com.edinarobotics.zebruh;
 import com.edinarobotics.zebruh.subsystems.Claw;
 import com.edinarobotics.zebruh.subsystems.Drivetrain;
 import com.edinarobotics.zebruh.subsystems.Elevator;
-import com.edinarobotics.zebruh.subsystems.HorizontalStrafe;
-import com.edinarobotics.zebruh.subsystems.RotationDrive;
-import com.edinarobotics.zebruh.subsystems.VerticalStrafe;
 
 import edu.wpi.first.wpilibj.Compressor;
 
@@ -13,9 +10,6 @@ public class Components {
 	private static Components instance;
 
 	public Drivetrain drivetrain;
-//	public RotationDrive rotationDrive;
-//	public HorizontalStrafe horizontalStrafe;
-//	public VerticalStrafe verticalStrafe;
 	public Elevator elevator;
 	public Claw claw;
 	public Compressor compressor;
@@ -33,22 +27,21 @@ public class Components {
 		//Elevator Constants
 		private final int ELEVATOR_CANTALON1 = 8;
 		private final int ELEVATOR_CANTALON2 = 7;
-
 		
 		private final int LIMIT_SWITCH_1 = 0;
 		private final int LIMIT_SWITCH_2 = 1;
 		private final int LIMIT_SWITCH_3 = 2;
 		private final int LIMIT_SWITCH_4 = 3;
-		
 		//End Elevator Constant
 		
 		//Claw Constants
 		private final int CLAW_SOLENOID_CHANNEL_A = 0;
 		private final int CLAW_SOLENOID_CHANNEL_B = 1;
+		
 		private final int ROTATE_SOLENOID_CHANNEL_A = 3;
 		private final int ROTATE_SOLENOID_CHANNEL_B = 2;
-		private final int SINGLE_SOLENOID_CHANNEL = 4;
 		
+		private final int SINGLE_SOLENOID_CHANNEL = 4;
 		//End Claw Constants
 		
 		private final int PCM_NODE_ID = 10;

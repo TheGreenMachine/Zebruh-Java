@@ -7,7 +7,6 @@ import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 import edu.wpi.first.wpilibj.Solenoid;
 
 public class Claw extends Subsystem1816 {
-
 	private DoubleSolenoid clampSolenoid;
 	private DoubleSolenoid rotateSolenoid;
 	private Solenoid solenoid;
@@ -69,7 +68,6 @@ public class Claw extends Subsystem1816 {
 		clampSolenoid.set(targetState.clamp);
 		rotateSolenoid.set(targetState.rotate);
 		solenoid.set(targetState.solenoidState);
-//		System.out.println("Clamp Solenoid: " + clampSolenoid.get().toString() + "    Rotate Solenoid: " + rotateSolenoid.get().toString());
 	}
 
 }

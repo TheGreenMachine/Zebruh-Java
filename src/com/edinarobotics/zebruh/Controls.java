@@ -10,7 +10,6 @@ import com.edinarobotics.utils.gamepad.gamepadfilters.DeadzoneFilter;
 import com.edinarobotics.utils.gamepad.gamepadfilters.GamepadFilter;
 import com.edinarobotics.utils.gamepad.gamepadfilters.GamepadFilterSet;
 import com.edinarobotics.utils.gamepad.gamepadfilters.PowerFilter;
-import com.edinarobotics.zebruh.commands.RunElevatorManualCommand;
 import com.edinarobotics.zebruh.commands.RunElevatorToLevelCommand;
 import com.edinarobotics.zebruh.commands.SetClawCommand;
 import com.edinarobotics.zebruh.commands.SetLowGearCommand;
@@ -27,7 +26,6 @@ public class Controls {
 
 	private Controls() {
 		// Drivetrain control
-
 		List<GamepadFilter> gamepadFilters = new ArrayList<GamepadFilter>();
 		gamepadFilters.add(new DeadzoneFilter(0.1));
 		gamepadFilters.add(new PowerFilter(1));
@@ -35,7 +33,6 @@ public class Controls {
 		gamepad0 = new FilteredGamepad(0, driveGamepadFilterSet);
 	    gamepad0.rightTrigger().whenPressed(new SetLowGearCommand(true));
 	    gamepad0.rightTrigger().whenReleased(new SetLowGearCommand(false));
-	    
 	    
 		//Elevator control gamepad
 		List<GamepadFilter> filters = new ArrayList<GamepadFilter>();
@@ -51,18 +48,12 @@ public class Controls {
 		gamepad1.rightBumper().whenPressed(new RunElevatorToLevelCommand(Elevator.ElevatorLevel.THREE_TOTES));
 		gamepad1.rightTrigger().whenPressed(new RunElevatorToLevelCommand(Elevator.ElevatorLevel.TOP));
 		
-		
 		gamepad1.dPadUp().whenPressed(new SetClawCommand(ClawState.CLAMP_DOWN_OPEN));
 		gamepad1.dPadDown().whenPressed(new SetClawCommand(ClawState.CLAMP_UP_MIDDLE_CLOSE));
 		gamepad1.dPadRight().whenPressed(new SetClawCommand(ClawState.CLAMP_DOWN_CLOSE));
 		gamepad1.dPadLeft().whenPressed(new SetClawCommand(ClawState.CLAMP_DOWN_OPEN));
 		
 		gamepad1.leftBumper().whenPressed(new SetClawCommand(ClawState.CLAMP_UP_FAR_CLOSE));
-		
-
-//		gamepad1.leftBumper().whileHeld(new RunElevatorManualCommand(MANUAL_TICKS_UP, true));
-//		gamepad1.leftTrigger().whileHeld(new RunElevatorManualCommand(-MANUAL_TICKS_DOWN, false));
-
 	}
 
 	/**

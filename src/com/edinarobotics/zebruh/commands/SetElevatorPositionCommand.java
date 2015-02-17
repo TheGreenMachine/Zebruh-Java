@@ -6,7 +6,6 @@ import com.edinarobotics.zebruh.subsystems.Elevator;
 import edu.wpi.first.wpilibj.command.Command;
 
 public class SetElevatorPositionCommand extends Command {
-
 	private Elevator elevator;
 	private int encoderTicks;
 	
