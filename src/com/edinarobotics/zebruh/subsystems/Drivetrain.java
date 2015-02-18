@@ -64,7 +64,7 @@ public class Drivetrain extends Subsystem1816 {
 			rotation *= SLOW_SPEED_SCALE;
 		}
 		this.verticalStrafe = verticalStrafe * DOWN_SCALE_MAIN;
-		this.horizontalStrafe = horizontalStrafe * DOWN_SCALE_MAIN;
+		this.horizontalStrafe = horizontalStrafe;
 		this.rotation = rotation * DOWN_SCALE_MAIN;
 		update();
 	}

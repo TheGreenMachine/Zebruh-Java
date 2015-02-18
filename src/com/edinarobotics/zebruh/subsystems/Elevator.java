@@ -2,7 +2,6 @@ package com.edinarobotics.zebruh.subsystems;
 
 import com.edinarobotics.utils.subsystems.Subsystem1816;
 
-import edu.wpi.first.wpilibj.CANJaguar.ControlMode;
 import edu.wpi.first.wpilibj.CANTalon;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
@@ -29,19 +28,16 @@ public class Elevator extends Subsystem1816 {
 
 	private int talonAChannel;
 
-	public static final int CLAW_UP_MAXIMUM_HEIGHT = -7000;
+	public static final int CLAW_UP_MAXIMUM_HEIGHT = -6700;
 
-	private final int MAXIMUM_TICKS = -7400;
+	private final int MAXIMUM_TICKS = -7650;
 	private final int MANUAL_TICKS_UP = -700;
-	private final int MANUAL_TICKS_DOWN = -400;
+	private final int MANUAL_TICKS_DOWN = -600;
 	
 	private Elevator.ElevatorLevel level;
 	private boolean override, downAuto, downManual;
-	private int currentTicks;
+	private int manualTargetTicks;
 
-	private boolean hasHitL3 = false;
-
-	private int stopEncoderPoint = 0;
 
 	public Elevator(int talonAChannel, int talonBChannel, int ls1Channel,
 			int ls2Channel, int ls3Channel, int ls4Channel) {
@@ -62,7 +58,7 @@ public class Elevator extends Subsystem1816 {
 	}
 
 	public enum ElevatorLevel {
-		BOTTOM(0), 
+		BOTTOM(50), 
 		PICKUP(-500), 
 		ONE_TOTE(-2400), 
 		TWO_TOTES(-3850), 
@@ -84,7 +80,7 @@ public class Elevator extends Subsystem1816 {
 	public void printInformation() {
 		System.out.println(getLS1() + "                 " + getLS4());
 		System.out.println("Actual: " + getEncoderTicks() + "         Target: "
-				+ currentTicks + " Level ticks: " + level.ticks);
+				+ manualTargetTicks + " Level ticks: " + level.ticks);
 	}
 
 	public int getEncoderTicks() {
@@ -148,6 +144,7 @@ public class Elevator extends Subsystem1816 {
 	
 	public void setManualTicks(double value, boolean isUp) {
 		int multiplier;
+		double storedValue = value;
 		if ((!getLS1() && !getLS4())
 				|| ((getLS1() && isUp) || (getLS4() && !isUp))) {
 			
@@ -160,23 +157,39 @@ public class Elevator extends Subsystem1816 {
 				multiplier = MANUAL_TICKS_DOWN;
 				talonA.setPID(P_AUTO_DOWN, I_AUTO_DOWN, D_AUTO_DOWN);
 			}
+
+			if(getEncoderTicks() < -7000 && !downManual) {
+				storedValue = value * 0.5;
+			}
 			
-			if(claw.getRotateState() == Value.kReverse && currentTicks > CLAW_UP_MAXIMUM_HEIGHT) {
-				currentTicks = (int) (talonA.getEncPosition() + (value * multiplier));
-				if(currentTicks > CLAW_UP_MAXIMUM_HEIGHT)
-					currentTicks = CLAW_UP_MAXIMUM_HEIGHT-200;
+			if(getEncoderTicks() < -7200 && !downManual) {
+				storedValue = value * 0.25;
+			}
+			
+			if(getEncoderTicks() > -250 && downManual) {
+				storedValue = value * 0.5;
+			}
+			
+			if(getEncoderTicks() > -100 && downManual) {
+				storedValue = value * 0.25;
+			}
+			
+			if(claw.getRotateState() == Value.kReverse && manualTargetTicks > CLAW_UP_MAXIMUM_HEIGHT) {
+				manualTargetTicks = (int) (talonA.getEncPosition() + (storedValue * multiplier));
+				if(manualTargetTicks < CLAW_UP_MAXIMUM_HEIGHT)
+					manualTargetTicks = CLAW_UP_MAXIMUM_HEIGHT;
 			}
 			 
-			if(claw.getRotateState() == Value.kForward && currentTicks > MAXIMUM_TICKS) {
-				currentTicks = (int) (talonA.getEncPosition() + (value * multiplier));
-				if(currentTicks > MAXIMUM_TICKS)
-					currentTicks = MAXIMUM_TICKS-100;
+			if(claw.getRotateState() == Value.kForward && manualTargetTicks > MAXIMUM_TICKS) {
+				manualTargetTicks = (int) (talonA.getEncPosition() + (storedValue * multiplier));
+				if(manualTargetTicks < MAXIMUM_TICKS)
+					manualTargetTicks = MAXIMUM_TICKS;
 			}
 			
-			if(currentTicks < ElevatorLevel.BOTTOM.ticks) {
-				currentTicks = (int) (talonA.getEncPosition() + (value * multiplier));
-				if(currentTicks > ElevatorLevel.BOTTOM.ticks)
-					currentTicks = ElevatorLevel.BOTTOM.ticks-100;
+			if(manualTargetTicks < ElevatorLevel.BOTTOM.ticks) {
+				manualTargetTicks = (int) (talonA.getEncPosition() + (storedValue * multiplier));
+				if(manualTargetTicks > ElevatorLevel.BOTTOM.ticks)
+					manualTargetTicks = ElevatorLevel.BOTTOM.ticks;
 			}
 			update();
 		}
@@ -184,9 +197,9 @@ public class Elevator extends Subsystem1816 {
 
 	public void setElevatorDown(int ticks) {
 		setOverride(false);
-		currentTicks = talonA.getEncPosition() + ticks;
-		if(currentTicks > level.ticks)
-			currentTicks = level.ticks + 100;
+		manualTargetTicks = talonA.getEncPosition() + ticks;
+		if(manualTargetTicks > level.ticks)
+			manualTargetTicks = level.ticks + 100;
 		update();
 	}
 
@@ -206,26 +219,17 @@ public class Elevator extends Subsystem1816 {
 	@Override
 	public void update() {
 		if (override) {
-			if (currentTicks <= CLAW_UP_MAXIMUM_HEIGHT
+			if (manualTargetTicks <= CLAW_UP_MAXIMUM_HEIGHT
 					&& claw.getRotateState() == DoubleSolenoid.Value.kReverse
 					&& !downManual) {
 				setTalons(CLAW_UP_MAXIMUM_HEIGHT);
-			} else if (getLS3() && !downManual
-					&& claw.getRotateState() == DoubleSolenoid.Value.kReverse) {
-				if (!hasHitL3) {
-					stopEncoderPoint = getEncoderTicks();
-					hasHitL3 = true;
-				}
-				setTalons(stopEncoderPoint);
 			} else {
-				if (!getLS4()) {
-					setTalons(currentTicks);
-				} else if (downManual) {
-					setTalons(currentTicks);
-				} else if (getLS4()) {
+				if (getLS4() && !downManual && claw.getRotateState() == DoubleSolenoid.Value.kForward) {
 					setTalons(MAXIMUM_TICKS);
-				} else if (talonA.getEncPosition() > ElevatorLevel.BOTTOM.ticks) {
+				} else if (talonA.getEncPosition() > ElevatorLevel.BOTTOM.ticks && downManual) {
 					setTalons(ElevatorLevel.BOTTOM.ticks);
+				} else {
+					setTalons(manualTargetTicks);
 				}
 			}
 		} else {
@@ -237,7 +241,7 @@ public class Elevator extends Subsystem1816 {
 					setTalons(level.ticks);
 				}
 			} else {
-				setTalons(currentTicks);
+				setTalons(manualTargetTicks);
 			}
 		}
 	}
