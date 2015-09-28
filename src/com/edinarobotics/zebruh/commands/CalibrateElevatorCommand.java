@@ -2,61 +2,51 @@ package com.edinarobotics.zebruh.commands;
 
 import com.edinarobotics.zebruh.Components;
 import com.edinarobotics.zebruh.subsystems.Elevator;
-import com.edinarobotics.zebruh.subsystems.Elevator.ElevatorLevel;
-
+import edu.wpi.first.wpilibj.CANTalon.ControlMode;
 import edu.wpi.first.wpilibj.command.Command;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class CalibrateElevatorCommand extends Command {
-
 	private Elevator elevator;
-	private ElevatorLevel level;
 	
 	public CalibrateElevatorCommand() {
 		super("CallibrateElevator");
 		elevator = Components.getInstance().elevator;
 		setInterruptible(false);
-//		setTimeout(0.5);
 		requires(elevator);
 	}
 	
 	@Override
 	protected void initialize() {
-//		elevator.setElevatorSpeed(-0.25);
+		elevator.getTalonA().changeControlMode(ControlMode.PercentVbus);
+		elevator.getTalonA().set(0.25);
+		SmartDashboard.putString("Elevator Calibration", "Not Calibrated");
 	}
 
 	@Override
 	protected void execute() {
+		
 	}
+	
 
 	@Override
 	protected boolean isFinished() {
-		if(elevator.getLS1()) {
-			level = ElevatorLevel.BOTTOM;
+		if(elevator.getLSBottom()) {
+			elevator.getTalonA().set(0.0);
+			elevator.getTalonA().changeControlMode(ControlMode.Position);
 			return true;
-//		} else if(elevator.getLS2()) {
-//			level = ElevatorLevel.PICKUP;
-//			return true;
-//		} else if(elevator.getLS3()) {
-//			level = ElevatorLevel.ONE_TOTE;
-//			return true;
-		} else if (elevator.getLS4()) {
-			level = ElevatorLevel.TOP;
-			return true;
-		}
+		} 
 		return false;
 	}
 
 	@Override
 	protected void end() {
-		elevator.setPosition(level.ticks+200);
-		elevator.setElevatorState(level);
-		System.out.println("calibrated" + level.ticks);
+		elevator.setPosition(0);
+		SmartDashboard.putString("Elevator Calibration", "Calibrated");
 	}
 
 	@Override
 	protected void interrupted() {
-		
-		// TODO Auto-generated method stub
 		
 	}
 

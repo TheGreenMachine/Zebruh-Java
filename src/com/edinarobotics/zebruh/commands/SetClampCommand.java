@@ -4,20 +4,20 @@ import com.edinarobotics.zebruh.Components;
 import com.edinarobotics.zebruh.subsystems.Claw;
 import edu.wpi.first.wpilibj.command.Command;
 
-public class SetClawCommand extends Command{
+public class SetClampCommand extends Command{
 	private Claw claw;
-	private Claw.ClawState clawState;
+	private Claw.ClampState clampState;
 	
-	public SetClawCommand(Claw.ClawState clawState){
-		super("SetClaw");
+	public SetClampCommand(Claw.ClampState clampState){
+		super("SetClamp");
 		claw = Components.getInstance().claw;
-		this.clawState = clawState;
+		this.clampState = clampState;
 		requires(claw);
 	}
 	
 	@Override
 	protected void initialize() {
-		claw.setClawState(clawState);
+		claw.setClampState(clampState);
 	}
 
 	@Override

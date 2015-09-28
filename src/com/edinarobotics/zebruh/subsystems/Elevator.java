@@ -1,225 +1,220 @@
 package com.edinarobotics.zebruh.subsystems;
 
 import com.edinarobotics.utils.subsystems.Subsystem1816;
+import com.edinarobotics.zebruh.Components;
 import com.edinarobotics.zebruh.Controls;
 
 import edu.wpi.first.wpilibj.CANTalon;
 import edu.wpi.first.wpilibj.DigitalInput;
-import edu.wpi.first.wpilibj.DoubleSolenoid;
+import edu.wpi.first.wpilibj.command.Command;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class Elevator extends Subsystem1816 {
-	
 	private CANTalon talonA, talonB;
-	private DigitalInput ls1, ls2, ls3, ls4;
-	
+	private DigitalInput lsBottom, lsTop;
+
 	private Claw claw;
-	
-	private final double P_AUTO_UP = 0.8;
-	private final double I_AUTO_UP = 0.00001;
-	private final double D_AUTO_UP = 0.0;
-	
-	private final double P_AUTO_DOWN = 1.6;
-	private final double I_AUTO_DOWN = 0.00001;
-	private final double D_AUTO_DOWN = 100.0;
-	
-	private final double P_MANUAL_UP = 1.0;
-	private final double D_MANUAL_UP = 0.0;
-	private final double I_MANUAL_UP = 0.0;
-	
+
 	private int talonAChannel;
+
+	public static final int CLAW_UP_MAX_HEIGHT = 7750;//6700;
+	public static final int MAX_HEIGHT = 7820;
+	public static final int MIN_HEIGHT = -50;
+	private static final int MANUAL_TICKS_UP = 700;
+	private static final int MANUAL_TICKS_DOWN = 600;
+	private static final int AUTO_TICKS_DOWN = 600;
 	
-	public static final int CLAW_UP_MAXIMUM_HEIGHT = -6500;
-	
-	private double lowestTick;
-	
-	private final int MAXIMUM_TICKS = -7400;
-	private final int RAMP_RATE = 6;
-	
-	private Elevator.ElevatorLevel level;
-	private boolean override, downAuto, downManual, didSetStop;
-	private int currentTicks;
-	
-	private boolean hasHitL3 = false;
-	private boolean hasHitL4 = false;
-	
-	private int stopEncoderPoint = 0;
-	
-	
-	public Elevator(int talonAChannel, int talonBChannel, int ls1Channel, int ls2Channel, 
-			int ls3Channel, int ls4Channel) {
+	private double target;
+	public boolean autoDownDone;
+
+
+	public Elevator(int talonAChannel, int talonBChannel, int lsBottomChannel, int lsTopChannel) {
 		talonA = new CANTalon(talonAChannel);
 		talonB = new CANTalon(talonBChannel);
-		ls1 = new DigitalInput(ls1Channel);
-		ls2 = new DigitalInput(ls2Channel);
-		ls3 = new DigitalInput(ls3Channel);
-		ls4 = new DigitalInput(ls4Channel);
+		
+		lsBottom = new DigitalInput(lsBottomChannel);
+		lsTop = new DigitalInput(lsTopChannel);
+		
 		this.talonAChannel = talonAChannel;
+		
 		talonA.changeControlMode(CANTalon.ControlMode.Position);
 		talonA.setFeedbackDevice(CANTalon.FeedbackDevice.QuadEncoder);
-		talonA.setPID(P_AUTO_UP, I_AUTO_UP, D_AUTO_UP);
 		talonB.changeControlMode(CANTalon.ControlMode.Follower);
-//		talonA.setVoltageRampRate(RAMP_RATE);
-//		talonB.setVoltageRampRate(RAMP_RATE);
-		override = false;
-		level = ElevatorLevel.BOTTOM;
-		downAuto = true;
-		didSetStop = false;
+		
+		target = 0;
+	}
+
+	public enum PIDValues {
+		UP_AUTO(3.6, 0.0, 2.5),
+		UP_MANUAL(1.5, 0.0, 0.0),
+		DOWN_AUTO(1.5, 0.0, 10),
+		DOWN_MANUAL(1.0, 0.0, 0.0);
+		
+		public double p, i, d;
+		
+		private PIDValues(double p, double i, double d) {
+			this.p = p;
+			this.i = i;
+			this.d = d;
+		}
 	}
 	
 	public enum ElevatorLevel {
-		 BOTTOM(0),
-		 PICKUP(-500),
-		 ONE_TOTE(-2400),
-		 TWO_TOTES(-3850),
-		 THREE_TOTES(-6400),
-		 TOP(-7000),
-		 BIN_PICKUP_AUTO(-1500);
-		 
-		 public int ticks;
-		 
-		 ElevatorLevel(int ticks) {
-			 this.ticks = ticks;
-		 }
-		 
-		 public static void setBottom(int ticks) {
-			 BOTTOM.ticks = ticks;
-		 }
-	}
-	
-	public void printInformation(){
-		System.out.println(getLS1() + "                 " + getLS4());
-		System.out.println("Actual: " + getEncoderTicks() + "         Target: " + currentTicks + " Level ticks: " + level.ticks);
-	}
-	
-	public int getEncoderTicks() {
-		return talonA.getEncPosition();
-	}
-	
-	public void setLowestTicks(int lowestTick) {
-		this.lowestTick = lowestTick;
-	}
-	
-	public boolean getLS1() {
-		return !ls1.get();
-	}
-	
-	public boolean getLS2() {
-		return !ls2.get();
-	}
-	
-	public boolean getLS3() {
-		return !ls3.get();
-	}
-	
-	public boolean getLS4() {
-		return !ls4.get();
-	}
-	
-	
-	public void setElevatorState(ElevatorLevel state) {
-		setOverride(false);
-		if(getEncoderTicks() < state.ticks) {
-			downAuto = true;
-			talonA.setPID(P_AUTO_DOWN, I_AUTO_DOWN, D_AUTO_DOWN);
-		} else {
-			downAuto = false;
-			talonA.setPID(P_AUTO_UP, I_AUTO_UP, D_AUTO_UP);
+		BOTTOM(MIN_HEIGHT), 
+		TWO_TOTES(2400), 
+		THREE_TOTES(3965), 
+		FOUR_TOTES(5224),
+		BIN_FOUR(6641), 
+		BIN_FIVE(MAX_HEIGHT),
+		BIN_PICKUP_AUTO(750);
+		
+		public int ticks;
+
+		private ElevatorLevel(int ticks) {
+			this.ticks = ticks;
 		}
-		level = state;
+	}
+
+	public double getEncoderTicks() {
+		return -talonA.getEncPosition();
+	}
+	
+	public double getTarget() {
+		return target;
+	}
+	
+	public CANTalon getTalonA() {
+		return talonA;
+	}
+
+	public boolean getLSBottom() {
+		return !lsBottom.get();
+	}
+
+	public boolean getLSTop() {
+		return !lsTop.get();
+	}
+	
+	public void setElevatorTarget(double joystickValue) {   //MANUAL CONTROL!!!
+		double current = getEncoderTicks();
+		target = current;
+		
+		if(joystickValue > 0) {   //If going up.
+			talonA.setPID(PIDValues.UP_MANUAL.p, PIDValues.UP_MANUAL.i, PIDValues.UP_MANUAL.d);
+			
+			if(!claw.getClawState().equals(Claw.ClawState.CLAW_DOWN)) {  //If claw is up.
+				if(current < CLAW_UP_MAX_HEIGHT) {
+					target = current + (joystickValue * MANUAL_TICKS_UP);  //Set the change.
+					
+					if(target > CLAW_UP_MAX_HEIGHT) {  	//Coerce to the target.
+						target = CLAW_UP_MAX_HEIGHT;
+					}
+				}
+				else {
+					target = CLAW_UP_MAX_HEIGHT;  //If it somehow got above, bring it down.
+				}
+				
+			}
+			else {   //If claw is down.
+				if(current < MAX_HEIGHT) {
+					target = current + (joystickValue * MANUAL_TICKS_UP);  //Set the change.
+					
+					if(target > MAX_HEIGHT) {  	//Coerce to the target.
+						target = MAX_HEIGHT;
+					}
+				}
+				else {
+					target = MAX_HEIGHT;  //If it somehow got above, bring it down.
+				}
+				
+			}	
+		}
+		else if(joystickValue < 0) {  //If going down.
+			talonA.setPID(PIDValues.DOWN_MANUAL.p, PIDValues.DOWN_MANUAL.i, PIDValues.DOWN_MANUAL.d);
+			
+			if(current > MIN_HEIGHT) {
+				target = current + (joystickValue * MANUAL_TICKS_DOWN);  //Set the change.
+				
+				if(target < MIN_HEIGHT) {  	//Coerce to the target.
+					target = MIN_HEIGHT;
+				}
+			}
+			else {
+				target = MIN_HEIGHT;  //If it somehow got below, bring it up.
+			}
+			/*
+			if(target < MIN_HEIGHT + 250)    						//Once it gets below 250, slow to 1/4 speed.
+				target = ((target - current) * 0.5) + current;
+			
+			else if(target < MIN_HEIGHT + 500)						//Once it gets below 500, slow to 1/2 speed.
+				target = ((target - current) * 0.75) + current;
+			*/
+		}
+		
 		update();
 	}
 	
-	public void setClaw(Claw claw){
+	public void setElevatorTarget(ElevatorLevel targetLevel) {	 //AUTO LEVEL CONTROL!!!
+		double current = getEncoderTicks();	
+		
+		
+		if(targetLevel.ticks > current) {																		//Automatic going up.
+			talonA.setPID(PIDValues.UP_AUTO.p, PIDValues.UP_AUTO.i, PIDValues.UP_AUTO.d);
+			
+			target = targetLevel.ticks;
+			
+			if(target > CLAW_UP_MAX_HEIGHT && !(claw.getClawState() == Claw.ClawState.CLAW_DOWN)) { //Don't let claw up go above max height.
+				target = CLAW_UP_MAX_HEIGHT;
+			}
+		}
+		else {																						//Automatic going down.
+			talonA.setPID(PIDValues.DOWN_AUTO.p, PIDValues.DOWN_AUTO.i, PIDValues.DOWN_AUTO.d);
+			
+			
+			target = current - AUTO_TICKS_DOWN;
+			
+			if(target < targetLevel.ticks) {
+				target = targetLevel.ticks;
+			}
+		}
+		
+		update();
+	}
+	
+	public void setClaw(Claw claw) {
 		this.claw = claw;
 	}
-	
-	public Claw getClaw(){
+
+	public Claw getClaw() {
 		return claw;
 	}
-	
-	public Elevator.ElevatorLevel getLevel() {
-		return level;
-	}
-	
-	public boolean isDownAutoDone() {
-		//Remember, we are working with negative ticks. So everything is backwards.
-		return talonA.getEncPosition() > level.ticks;
-	}
-	
-	public void setManualTicks(int ticks, boolean isUp){
-		setOverride(true);
-		
-		if((!getLS1() && !getLS4()) || ((getLS1() && isUp) || (getLS4() && !isUp))) {
-			if (ticks < 0){
-				downManual = false;
-				talonA.setPID(P_MANUAL_UP, I_MANUAL_UP, D_MANUAL_UP);
-			} else {
-				downManual = true;
-				talonA.setPID(P_AUTO_DOWN, I_AUTO_DOWN, D_AUTO_DOWN);
-			}
-			if(currentTicks > CLAW_UP_MAXIMUM_HEIGHT)
-				currentTicks = talonA.getEncPosition() + ticks;
-			else if(currentTicks < CLAW_UP_MAXIMUM_HEIGHT)
-				currentTicks = talonA.getEncPosition() + ticks;
-			update();
-		}
-	}
-	
-	public void setElevatorDown(int ticks) {
-		setOverride(false);
-		currentTicks = talonA.getEncPosition() + ticks;
-		update();
+
+	private void setTalons(double ticks) {
+		talonA.set(-ticks);
+		talonB.set(talonAChannel);
 	}
 	
 	public void setPosition(int ticks) {
-		talonA.setPosition(ticks);
+		talonA.setPosition(ticks+5);
 	}
 	
-	private void setOverride(boolean override) {
-		this.override = override;
+	public void setDefaultCommand(Command command) {
+		if (getDefaultCommand() != null) {
+			super.getDefaultCommand().cancel();
+		}
+		super.setDefaultCommand(command);
 	}
-	
-	private void setTalons(int tick){
-		talonA.set(tick);
-		talonB.set(talonAChannel);
+
+	public boolean pickUpPosition() {
+		if(getEncoderTicks() < 50)
+			return true;
+		else
+			return false;
 	}
 	
 	@Override
 	public void update() {
-		System.out.println("Target: " + level.ticks + "      Current: " + getEncoderTicks());
-//		System.out.println("Limit 1: " + getLS1() + " Limit 4: " + getLS4());
-			System.out.println("LimitSwitch4 not on");
-			if(override) {
-				if(currentTicks <= CLAW_UP_MAXIMUM_HEIGHT && 
-						claw.getRotateState() == DoubleSolenoid.Value.kReverse && !downManual){
-					setTalons(CLAW_UP_MAXIMUM_HEIGHT);	
-				} else if(getLS3()&& !downManual && claw.getRotateState() == DoubleSolenoid.Value.kReverse) {
-					if(!hasHitL3) {
-						stopEncoderPoint = getEncoderTicks();
-						hasHitL3 = true;
-					}
-					setTalons(stopEncoderPoint);
-				} else {
-					if(!getLS4()) {
-						setTalons(currentTicks);
-					} else if(downManual) {
-						setTalons(currentTicks);
-					} else if(getLS4()) {
-						setTalons(MAXIMUM_TICKS);
-					} else if(talonA.getEncPosition() > ElevatorLevel.BOTTOM.ticks) {
-						setTalons(ElevatorLevel.BOTTOM.ticks);
-					}
-				}
-			} else {
-				if(!downAuto) {
-					if(level == ElevatorLevel.TOP && claw.getRotateState() == DoubleSolenoid.Value.kReverse) {
-						setTalons(ElevatorLevel.THREE_TOTES.ticks);
-					} else {
-						setTalons(level.ticks);
-					}
-				} else {
-					setTalons(currentTicks);
-				} 
-			}
+		setTalons(target);
 	}
+	
 }

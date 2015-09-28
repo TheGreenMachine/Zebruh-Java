@@ -3,33 +3,48 @@ package com.edinarobotics.zebruh.subsystems;
 import com.edinarobotics.utils.subsystems.Subsystem1816;
 
 import edu.wpi.first.wpilibj.DoubleSolenoid;
-import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
+import edu.wpi.first.wpilibj.Solenoid;
 
 public class Claw extends Subsystem1816 {
-
 	private DoubleSolenoid clampSolenoid;
 	private DoubleSolenoid rotateSolenoid;
-	private ClawState targetState;
+	private Solenoid carrySolenoid;
+	private ClawState targetClawState;
+	private ClampState targetClampState;
 	
 	private Elevator elevator;
 	
-	public Claw(int clampChannel1, int clampChannel2, int rotateChannel1, int rotateChannel2, int pcmNode) {
+	public Claw(int clampChannel1, int clampChannel2, int rotateChannel1, int rotateChannel2, int singleChannel, int pcmNode) {
 		clampSolenoid = new DoubleSolenoid(pcmNode, clampChannel1, clampChannel2);
 		rotateSolenoid = new DoubleSolenoid(pcmNode, rotateChannel1, rotateChannel2);
-		targetState = ClawState.CLAMP_UP_OPEN;
+		carrySolenoid = new Solenoid(pcmNode, singleChannel);
+		targetClawState = ClawState.CLAW_VERTICAL;
+		targetClampState = ClampState.CLAMP_CLOSED;
 	}
 	
 	public enum ClawState {
-		CLAMP_DOWN_OPEN(DoubleSolenoid.Value.kReverse, DoubleSolenoid.Value.kForward),
-		CLAMP_DOWN_CLOSE(DoubleSolenoid.Value.kForward, DoubleSolenoid.Value.kForward),
-		CLAMP_UP_CLOSE(DoubleSolenoid.Value.kForward, DoubleSolenoid.Value.kReverse),
-		CLAMP_UP_OPEN(DoubleSolenoid.Value.kReverse, DoubleSolenoid.Value.kReverse);
+		CLAW_DOWN(DoubleSolenoid.Value.kForward, true),
+		CLAW_CARRY(DoubleSolenoid.Value.kReverse, true),
+		CLAW_VERTICAL(DoubleSolenoid.Value.kReverse, false);
 		
-		public DoubleSolenoid.Value clamp, rotate;
+		public DoubleSolenoid.Value rotate;
+		public boolean bumper;
 		
-		private ClawState(DoubleSolenoid.Value clamp, DoubleSolenoid.Value rotate){
-			this.clamp = clamp;
+		private ClawState(DoubleSolenoid.Value rotate, boolean solenoidState){
 			this.rotate = rotate;
+			this.bumper = solenoidState;
+		}
+	}
+	
+	public enum ClampState {
+		CLAMP_OPEN(DoubleSolenoid.Value.kReverse),
+		CLAMP_CLOSED(DoubleSolenoid.Value.kForward);
+		
+		public DoubleSolenoid.Value clamp;
+		
+		private ClampState(DoubleSolenoid.Value clamp)
+		{
+			this.clamp = clamp;
 		}
 	}
 	
@@ -41,28 +56,39 @@ public class Claw extends Subsystem1816 {
 		return elevator;
 	}
 	
-	public void setClawState(ClawState state) {
-		
-		if(!(elevator.getEncoderTicks() <= Elevator.CLAW_UP_MAXIMUM_HEIGHT && getRotateState() == Value.kForward && state.rotate == Value.kReverse)) {
-			targetState = state;
+	public void setClawState(ClawState clawState) {
+		if(!(elevator.getEncoderTicks() > Elevator.CLAW_UP_MAX_HEIGHT) || !targetClawState.equals(ClawState.CLAW_DOWN)) {
+			targetClawState = clawState;
 		}
 		
 		update();
 	}
-	
-	public Value getClampState() {
-		return targetState.clamp;
+	public void setClampState(ClampState clampState) {
+		targetClampState = clampState;
+		
+		update();
 	}
 	
-	public Value getRotateState() {
-		return targetState.rotate;
+	public ClampState getClampState() {
+		return targetClampState;
+	}
+	
+	public ClawState getClawState() {
+		return targetClawState;
+	}
+	
+	public boolean pickUpPosition() {
+		if(targetClawState.equals(ClawState.CLAW_VERTICAL) && targetClampState.equals(ClampState.CLAMP_CLOSED))
+			return true;
+		else
+			return false;
 	}
 	
 	@Override
 	public void update() {
-		clampSolenoid.set(targetState.clamp);
-		rotateSolenoid.set(targetState.rotate);
-//		System.out.println("Clamp Solenoid: " + clampSolenoid.get().toString() + "    Rotate Solenoid: " + rotateSolenoid.get().toString());
+		clampSolenoid.set(targetClampState.clamp);
+		rotateSolenoid.set(targetClawState.rotate);
+		carrySolenoid.set(targetClawState.bumper);
 	}
 
 }

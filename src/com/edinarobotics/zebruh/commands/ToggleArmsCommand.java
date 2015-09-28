@@ -1,23 +1,28 @@
 package com.edinarobotics.zebruh.commands;
 
 import com.edinarobotics.zebruh.Components;
-import com.edinarobotics.zebruh.subsystems.Claw;
+import com.edinarobotics.zebruh.subsystems.Arms;
+
 import edu.wpi.first.wpilibj.command.Command;
 
-public class SetClawCommand extends Command{
-	private Claw claw;
-	private Claw.ClawState clawState;
+public class ToggleArmsCommand extends Command{
+	private Arms arms;
+	boolean left;
 	
-	public SetClawCommand(Claw.ClawState clawState){
-		super("SetClaw");
-		claw = Components.getInstance().claw;
-		this.clawState = clawState;
-		requires(claw);
+	public ToggleArmsCommand(boolean left){
+		super("ToggleArms");
+		arms = Components.getInstance().arms;
+		this.setInterruptible(true);
+		this.left = left;
+		requires(arms);
 	}
 	
 	@Override
 	protected void initialize() {
-		claw.setClawState(clawState);
+		if(left)
+			arms.toggleLeftArm();
+		else
+			arms.toggleRightArm();
 	}
 
 	@Override

@@ -5,37 +5,35 @@ import com.edinarobotics.zebruh.subsystems.Drivetrain;
 
 import edu.wpi.first.wpilibj.command.Command;
 
-public class DriveXTimeVerticalCommand extends Command {
-	
-	private double speed;
+public class SetLowSpeedCommand extends Command {
 	private Drivetrain drivetrain;
-
-	public DriveXTimeVerticalCommand(double time, double speed) {
-		super("drivextimevertical");
+	private boolean lowGear;
+	
+	public SetLowSpeedCommand(boolean lowGear) {
+		super("setlowgear");
 		drivetrain = Components.getInstance().drivetrain;
-		this.speed = speed;
-		setTimeout(time);
+		this.lowGear = lowGear;
 		requires(drivetrain);
 	}
 	
 	@Override
 	protected void initialize() {
-		
+		drivetrain.setSlowSpeed(lowGear);
 	}
 
 	@Override
 	protected void execute() {
-		drivetrain.setDrivetrain(speed, 0.0, 0.0);
+		
 	}
 
 	@Override
 	protected boolean isFinished() {
-		return isTimedOut();
+		return true;
 	}
 
 	@Override
 	protected void end() {
-		drivetrain.setDrivetrain(0.0, 0.0, 0.0);
+		
 	}
 
 	@Override

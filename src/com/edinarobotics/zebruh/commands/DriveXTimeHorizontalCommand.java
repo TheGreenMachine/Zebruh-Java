@@ -6,7 +6,6 @@ import com.edinarobotics.zebruh.subsystems.Drivetrain;
 import edu.wpi.first.wpilibj.command.Command;
 
 public class DriveXTimeHorizontalCommand extends Command {
-	
 	private Drivetrain drivetrain;
 	private double speed;
 

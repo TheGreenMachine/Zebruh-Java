@@ -42,4 +42,5 @@ public class GamepadRotationCommand extends Command {
 	protected void interrupted() {
 
 	}
+	
 }

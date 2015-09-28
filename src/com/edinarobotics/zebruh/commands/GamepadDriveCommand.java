@@ -7,7 +7,6 @@ import com.edinarobotics.zebruh.subsystems.Drivetrain;
 import edu.wpi.first.wpilibj.command.Command;
 
 public class GamepadDriveCommand extends Command {
-
 	private Drivetrain drivetrain;
 	private GamepadNew gamepad;
 	
@@ -20,6 +19,7 @@ public class GamepadDriveCommand extends Command {
 	
 	@Override
 	protected void initialize() {
+		
 	}
 
 	@Override

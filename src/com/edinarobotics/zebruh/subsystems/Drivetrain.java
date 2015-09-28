@@ -1,6 +1,5 @@
 package com.edinarobotics.zebruh.subsystems;
 
-
 import com.edinarobotics.utils.subsystems.Subsystem1816;
 
 import edu.wpi.first.wpilibj.CANTalon;
@@ -13,10 +12,11 @@ public class Drivetrain extends Subsystem1816 {
 
 	private HRobotDrive hRobotDrive;
 	
-	private boolean lowGear;
+	private boolean slowSpeed, mediumSpeed;
 	
-	private final double DOWN_SCALE_MAIN = 0.8;
-	private final double SLOW_SPEED_SCALE = 0.6;
+	private final double DOWN_SCALE_MAIN = 1.0;
+	private final double MEDIUM_SPEED_SCALE = 0.75;
+	private final double SLOW_SPEED_SCALE = 0.55;
 	
 	private final int RAMP_RATE = 100;
 
@@ -36,7 +36,8 @@ public class Drivetrain extends Subsystem1816 {
 		this.bottomRight.setVoltageRampRate(RAMP_RATE);
 		hRobotDrive = new HRobotDrive(this.topLeft, this.bottomLeft,
 				this.topRight, this.bottomRight, middleBottom, middleTop);
-		lowGear = false;
+		slowSpeed = false;
+		mediumSpeed = false;
 	}
 
 	public void setVerticalStrafe(double verticalStrafe) {
@@ -54,18 +55,27 @@ public class Drivetrain extends Subsystem1816 {
 		update();
 	}
 	
-	public void setLowGear(boolean lowGear) {
-		this.lowGear = lowGear;
+	public void setSlowSpeed(boolean slowSpeed) {
+		this.slowSpeed = slowSpeed;
+	}
+	
+	public void setMediumSpeed(boolean mediumSpeed) {
+		this.mediumSpeed = mediumSpeed;
 	}
 	
 	public void setDrivetrain(double verticalStrafe, double horizontalStrafe, double rotation) {
-		if(lowGear) {
+		if((slowSpeed && !mediumSpeed) || (mediumSpeed && slowSpeed)) {
 			verticalStrafe *= SLOW_SPEED_SCALE;
 			horizontalStrafe *= SLOW_SPEED_SCALE;
 			rotation *= SLOW_SPEED_SCALE;
+		} else if(mediumSpeed && !slowSpeed) {
+			verticalStrafe *= MEDIUM_SPEED_SCALE;
+			horizontalStrafe *= MEDIUM_SPEED_SCALE;
+			rotation *= MEDIUM_SPEED_SCALE;
 		}
+		
 		this.verticalStrafe = verticalStrafe * DOWN_SCALE_MAIN;
-		this.horizontalStrafe = horizontalStrafe * DOWN_SCALE_MAIN;
+		this.horizontalStrafe = horizontalStrafe;
 		this.rotation = rotation * DOWN_SCALE_MAIN;
 		update();
 	}
@@ -80,7 +90,5 @@ public class Drivetrain extends Subsystem1816 {
 	@Override
 	public void update() {
 		hRobotDrive.hDrive(verticalStrafe, horizontalStrafe, rotation);
-//		System.out.println("TopLeft: " + topLeft.get() + "      TopRight: " + topRight.get() + 
-//				"     BottomRight: " + bottomRight.get() + "      BottomLeft: " + bottomLeft.get());
 	}
 }
