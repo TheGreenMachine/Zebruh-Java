@@ -12,6 +12,7 @@ public class SetClawCommand extends Command{
 		super("SetClaw");
 		claw = Components.getInstance().claw;
 		this.clawState = clawState;
+		System.out.println(clawState.toString());
 		requires(claw);
 	}
 	

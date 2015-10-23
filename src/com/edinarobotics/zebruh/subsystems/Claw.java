@@ -57,7 +57,17 @@ public class Claw extends Subsystem1816 {
 	}
 	
 	public void setClawState(ClawState clawState) {
-		if(!(elevator.getEncoderTicks() > Elevator.CLAW_UP_MAX_HEIGHT) || !targetClawState.equals(ClawState.CLAW_DOWN)) {
+		if(clawState.equals(ClawState.CLAW_CARRY)) {
+			if(elevator.getEncoderTicks() <= Elevator.CLAW_CARRY_MAX_HEIGHT) {
+				targetClawState = clawState;
+			}
+		}
+		else if(clawState.equals(ClawState.CLAW_DOWN)) {
+			if(elevator.getEncoderTicks() >= Elevator.CLAW_DOWN_MIN_HEIGHT) {
+				targetClawState = clawState;
+			}
+		}
+		else {
 			targetClawState = clawState;
 		}
 		
@@ -65,7 +75,7 @@ public class Claw extends Subsystem1816 {
 	}
 	public void setClampState(ClampState clampState) {
 		targetClampState = clampState;
-		
+				
 		update();
 	}
 	

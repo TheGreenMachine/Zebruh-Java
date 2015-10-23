@@ -17,9 +17,10 @@ public class Elevator extends Subsystem1816 {
 
 	private int talonAChannel;
 
-	public static final int CLAW_UP_MAX_HEIGHT = 7750;//6700;
-	public static final int MAX_HEIGHT = 7820;
-	public static final int MIN_HEIGHT = -50;
+	public static final int CLAW_DOWN_MIN_HEIGHT = 1400;
+	public static final int CLAW_CARRY_MAX_HEIGHT = 7100;
+	public static final int MAX_HEIGHT = 7600;
+	public static final int MIN_HEIGHT = -25;
 	private static final int MANUAL_TICKS_UP = 700;
 	private static final int MANUAL_TICKS_DOWN = 600;
 	private static final int AUTO_TICKS_DOWN = 600;
@@ -66,7 +67,8 @@ public class Elevator extends Subsystem1816 {
 		FOUR_TOTES(5224),
 		BIN_FOUR(6641), 
 		BIN_FIVE(MAX_HEIGHT),
-		BIN_PICKUP_AUTO(750);
+		BIN_PICKUP_AUTO(750),
+		BIN_PICKUP_SIDE(1875);
 		
 		public int ticks;
 
@@ -102,21 +104,22 @@ public class Elevator extends Subsystem1816 {
 		if(joystickValue > 0) {   //If going up.
 			talonA.setPID(PIDValues.UP_MANUAL.p, PIDValues.UP_MANUAL.i, PIDValues.UP_MANUAL.d);
 			
-			if(!claw.getClawState().equals(Claw.ClawState.CLAW_DOWN)) {  //If claw is up.
-				if(current < CLAW_UP_MAX_HEIGHT) {
+			if(claw.getClawState().equals(Claw.ClawState.CLAW_CARRY)) {
+				if(current < CLAW_CARRY_MAX_HEIGHT) {
+					
 					target = current + (joystickValue * MANUAL_TICKS_UP);  //Set the change.
 					
-					if(target > CLAW_UP_MAX_HEIGHT) {  	//Coerce to the target.
-						target = CLAW_UP_MAX_HEIGHT;
+					if(target > CLAW_CARRY_MAX_HEIGHT) {  	//Coerce to the target.
+						target = CLAW_CARRY_MAX_HEIGHT;
 					}
 				}
 				else {
-					target = CLAW_UP_MAX_HEIGHT;  //If it somehow got above, bring it down.
+					target = CLAW_CARRY_MAX_HEIGHT;  //If it somehow got above, bring it down.
 				}
-				
 			}
-			else {   //If claw is down.
+			else {
 				if(current < MAX_HEIGHT) {
+						
 					target = current + (joystickValue * MANUAL_TICKS_UP);  //Set the change.
 					
 					if(target > MAX_HEIGHT) {  	//Coerce to the target.
@@ -126,29 +129,37 @@ public class Elevator extends Subsystem1816 {
 				else {
 					target = MAX_HEIGHT;  //If it somehow got above, bring it down.
 				}
-				
-			}	
+			}
 		}
 		else if(joystickValue < 0) {  //If going down.
 			talonA.setPID(PIDValues.DOWN_MANUAL.p, PIDValues.DOWN_MANUAL.i, PIDValues.DOWN_MANUAL.d);
 			
-			if(current > MIN_HEIGHT) {
-				target = current + (joystickValue * MANUAL_TICKS_DOWN);  //Set the change.
+			if(claw.getClawState().equals(Claw.ClawState.CLAW_DOWN)) {  //If claw is down.
+				if(current > CLAW_DOWN_MIN_HEIGHT) {
+					target = current + (joystickValue * MANUAL_TICKS_DOWN);  //Set the change.
+					
+					if(target < CLAW_DOWN_MIN_HEIGHT) {  	//Coerce to the target.
+						target = CLAW_DOWN_MIN_HEIGHT;
+					}
+				}
+				else {
+					target = CLAW_DOWN_MIN_HEIGHT;  //If it somehow got above, bring it down.
+				}
 				
-				if(target < MIN_HEIGHT) {  	//Coerce to the target.
-					target = MIN_HEIGHT;
+			}
+			else {   //If claw is up.
+				if(current > MIN_HEIGHT) {
+					target = current + (joystickValue * MANUAL_TICKS_DOWN);  //Set the change.
+					
+					if(target < MIN_HEIGHT) {  	//Coerce to the target.
+						target = MIN_HEIGHT;
+					}
+				}
+				else {
+					target = MIN_HEIGHT;  //If it somehow got above, bring it down.
 				}
 			}
-			else {
-				target = MIN_HEIGHT;  //If it somehow got below, bring it up.
-			}
-			/*
-			if(target < MIN_HEIGHT + 250)    						//Once it gets below 250, slow to 1/4 speed.
-				target = ((target - current) * 0.5) + current;
-			
-			else if(target < MIN_HEIGHT + 500)						//Once it gets below 500, slow to 1/2 speed.
-				target = ((target - current) * 0.75) + current;
-			*/
+					
 		}
 		
 		update();
@@ -162,20 +173,29 @@ public class Elevator extends Subsystem1816 {
 			talonA.setPID(PIDValues.UP_AUTO.p, PIDValues.UP_AUTO.i, PIDValues.UP_AUTO.d);
 			
 			target = targetLevel.ticks;
-			
-			if(target > CLAW_UP_MAX_HEIGHT && !(claw.getClawState() == Claw.ClawState.CLAW_DOWN)) { //Don't let claw up go above max height.
-				target = CLAW_UP_MAX_HEIGHT;
+			if(claw.getClawState().equals(Claw.ClawState.CLAW_CARRY)) {
+				if(target > CLAW_CARRY_MAX_HEIGHT) {
+					target = CLAW_CARRY_MAX_HEIGHT;
+				}
+			}
+			else {
+				if(target < targetLevel.ticks) {
+					target = targetLevel.ticks;
+				}
 			}
 		}
 		else {																						//Automatic going down.
-			talonA.setPID(PIDValues.DOWN_AUTO.p, PIDValues.DOWN_AUTO.i, PIDValues.DOWN_AUTO.d);
-			
+			talonA.setPID(PIDValues.DOWN_AUTO.p, PIDValues.DOWN_AUTO.i, PIDValues.DOWN_AUTO.d);			
 			
 			target = current - AUTO_TICKS_DOWN;
 			
-			if(target < targetLevel.ticks) {
+			if(target < CLAW_DOWN_MIN_HEIGHT && claw.getClawState() == Claw.ClawState.CLAW_DOWN) { //Don't let claw down go below min height.
+				target = CLAW_DOWN_MIN_HEIGHT;
+			}
+			else if(target < targetLevel.ticks) {
 				target = targetLevel.ticks;
 			}
+			
 		}
 		
 		update();
@@ -192,6 +212,7 @@ public class Elevator extends Subsystem1816 {
 	private void setTalons(double ticks) {
 		talonA.set(-ticks);
 		talonB.set(talonAChannel);
+		//hi eric
 	}
 	
 	public void setPosition(int ticks) {

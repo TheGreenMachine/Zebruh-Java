@@ -19,7 +19,7 @@ public class CalibrateElevatorCommand extends Command {
 	@Override
 	protected void initialize() {
 		elevator.getTalonA().changeControlMode(ControlMode.PercentVbus);
-		elevator.getTalonA().set(0.25);
+		elevator.getTalonA().set(0.2);
 		SmartDashboard.putString("Elevator Calibration", "Not Calibrated");
 	}
 

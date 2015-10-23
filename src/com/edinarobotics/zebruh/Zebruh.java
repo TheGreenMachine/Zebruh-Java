@@ -66,7 +66,6 @@ public class Zebruh extends IterativeRobot {
 		Components.getInstance().drivetrain
 				.setDefaultCommand(new GamepadDriveCommand(gamepad0));
 		Components.getInstance().elevator.setDefaultCommand(new RunElevatorManualCommand(gamepad1));
-		
 		if(!wasAutonomous) {
 			CalibrateElevatorCommand calibration = new CalibrateElevatorCommand();
 			calibration.start();
@@ -81,6 +80,7 @@ public class Zebruh extends IterativeRobot {
 	private void updateDashboard() {
 		SmartDashboard.putBoolean("Claw Pickup?", claw.pickUpPosition());
 		SmartDashboard.putBoolean("Elevator Pickup?", elevator.pickUpPosition());
+		SmartDashboard.putString("Claw State", claw.getClawState().toString());
 		SmartDashboard.putNumber("Current Encoder Ticks", elevator.getEncoderTicks());
 		SmartDashboard.putNumber("Target Encoder Ticks", elevator.getTarget());
 	}

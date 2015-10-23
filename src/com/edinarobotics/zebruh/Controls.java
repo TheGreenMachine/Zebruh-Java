@@ -15,6 +15,7 @@ import com.edinarobotics.zebruh.commands.SetArmsCommand;
 import com.edinarobotics.zebruh.commands.SetClawCommand;
 import com.edinarobotics.zebruh.commands.SetLowSpeedCommand;
 import com.edinarobotics.zebruh.commands.SetMediumSpeedCommand;
+import com.edinarobotics.zebruh.commands.ToggleArmsCommand;
 import com.edinarobotics.zebruh.subsystems.Claw.ClampState;
 import com.edinarobotics.zebruh.subsystems.Claw.ClawState;
 import com.edinarobotics.zebruh.commands.SetClampCommand;
@@ -34,8 +35,8 @@ public class Controls {
 		gamepadFilters.add(new PowerFilter(1));
 		GamepadFilterSet driveGamepadFilterSet = new GamepadFilterSet(gamepadFilters);
 		gamepad0 = new FilteredGamepad(0, driveGamepadFilterSet);
-	    gamepad0.rightTrigger().whenPressed(new SetLowSpeedCommand(true));
-	    gamepad0.rightTrigger().whenReleased(new SetLowSpeedCommand(false));
+	    gamepad0.leftBumper().whenPressed(new SetLowSpeedCommand(true));
+	    gamepad0.leftBumper().whenReleased(new SetLowSpeedCommand(false));
 	    
 	    gamepad0.rightBumper().whenPressed(new SetMediumSpeedCommand(true));
 	    gamepad0.rightBumper().whenReleased(new SetMediumSpeedCommand(false));
@@ -49,10 +50,10 @@ public class Controls {
 
 		gamepad1.diamondUp().whenPressed(new RunElevatorToLevelCommand(Elevator.ElevatorLevel.BOTTOM));
 		gamepad1.diamondRight().whenPressed(new RunElevatorToLevelCommand(Elevator.ElevatorLevel.TWO_TOTES));
-		gamepad1.diamondDown().whenPressed(new RunElevatorToLevelCommand(Elevator.ElevatorLevel.THREE_TOTES));
-		gamepad1.diamondLeft().whenPressed(new RunElevatorToLevelCommand(Elevator.ElevatorLevel.FOUR_TOTES));
+		//gamepad1.diamondDown().whenPressed(new SetClawCommand(ClawState.CLAW_VERTICAL));
 		gamepad1.rightBumper().whenPressed(new RunElevatorToLevelCommand(Elevator.ElevatorLevel.BIN_FOUR));
 		gamepad1.rightTrigger().whenPressed(new RunElevatorToLevelCommand(Elevator.ElevatorLevel.BIN_FIVE));
+		gamepad1.leftTrigger().whenPressed(new RunElevatorToLevelCommand(Elevator.ElevatorLevel.BIN_PICKUP_SIDE));
 		
 		gamepad1.dPadDown().whenPressed(new SetClawCommand(ClawState.CLAW_VERTICAL));
 		gamepad1.dPadUp().whenPressed(new SetClawCommand(ClawState.CLAW_DOWN));
@@ -60,8 +61,8 @@ public class Controls {
 		gamepad1.dPadRight().whenPressed(new SetClampCommand(ClampState.CLAMP_CLOSED));
 		gamepad1.dPadLeft().whenPressed(new SetClampCommand(ClampState.CLAMP_OPEN));
 		
-		gamepad1.middleLeft().whenPressed(new SetArmsCommand(Arms.ArmState.DOWN));
-		gamepad1.middleRight().whenPressed(new SetArmsCommand(Arms.ArmState.UP));
+		gamepad1.middleLeft().whenPressed(new ToggleArmsCommand(false));
+		gamepad1.middleRight().whenPressed(new ToggleArmsCommand(true));
 
 	}
 
